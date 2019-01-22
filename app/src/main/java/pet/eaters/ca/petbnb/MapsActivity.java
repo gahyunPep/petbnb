@@ -1,6 +1,6 @@
 package pet.eaters.ca.petbnb;
 
-import android.support.v4.app.FragmentActivity;
+import androidx.core.app.FragmentActivity;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
