@@ -1,8 +1,9 @@
 package pet.eaters.ca.petbnb;
 
 import android.content.Context;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
+
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 
 public class PerBnbApplication extends MultiDexApplication {
     @Override

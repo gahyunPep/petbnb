@@ -1,6 +1,5 @@
 package pet.eaters.ca.petbnb.pets;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -14,6 +13,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class PetsRepository {
     //Fake object for test purposes
