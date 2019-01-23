@@ -13,6 +13,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -65,11 +66,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
 
         }else if (mMap != null){
-            Log.d("workingmmap","Access to the location has been granted to the app");
+            Log.d("workingmmap","Access to the location already granted");
             mMap.setMyLocationEnabled(true);
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                if(grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.d("workingmmap","Permission granted");
 
+                }else{
+                    Log.d("workingmmap","Permission denied");
 
+                }
+                return;
+            }
+        }
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }
