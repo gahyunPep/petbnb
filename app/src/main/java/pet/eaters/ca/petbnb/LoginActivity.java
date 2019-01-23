@@ -32,16 +32,19 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         final List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
+               new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.FacebookBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build()
         );
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setAvailableProviders(providers)
-                                .build(),
-                        RC_SIGN_IN);
+
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .setLogo(R.drawable.logo)      // Set logo drawable
+                        .setTheme(R.style.AppTheme)      // Set theme
+                        .build(),
+                RC_SIGN_IN);
 
         AuthUI.getInstance()
                 .signOut(this)
@@ -50,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+
 
     }
 
