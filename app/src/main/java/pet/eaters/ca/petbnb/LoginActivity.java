@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
 
         final List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
+               new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.FacebookBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build()
         );
@@ -43,6 +44,15 @@ public class LoginActivity extends AppCompatActivity {
                                 .build(),
                         RC_SIGN_IN);
 
+        startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .setLogo(R.drawable.logo)      // Set logo drawable
+                        .setTheme(R.style.AppTheme)      // Set theme
+                        .build(),
+                RC_SIGN_IN);
+
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -50,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+
 
     }
 
