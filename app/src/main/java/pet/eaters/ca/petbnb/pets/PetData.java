@@ -2,24 +2,24 @@ package pet.eaters.ca.petbnb.pets;
 
 import java.util.List;
 
-public class FirebasePet {
-    protected String name;
-    protected String info;
-    protected String type;
-    protected int size;
-    protected List<String> images;
-    protected String phone;
-    protected String address;
-    protected String zipCode;
-    protected double latitude;
-    protected double longitude;
-    protected int age;
-    protected int gender;
+public class PetData {
+    private String name;
+    private String info;
+    private String type;
+    private int size;
+    private List<String> images;
+    private String phone;
+    private String address;
+    private String zipCode;
+    private double latitude;
+    private double longitude;
+    private int age;
+    private int gender;
 
     //Empty constructor for firebase
-    public FirebasePet() {}
+    public PetData() {}
 
-    public FirebasePet(String name, String info, String type, int size, List<String> images, String phone, String address, String zipCode, double latitude, double longitude, int age, int gender) {
+    public PetData(String name, String info, String type, int size, List<String> images, String phone, String address, String zipCode, double latitude, double longitude, int age, int gender) {
         this.name = name;
         this.info = info;
         this.type = type;
