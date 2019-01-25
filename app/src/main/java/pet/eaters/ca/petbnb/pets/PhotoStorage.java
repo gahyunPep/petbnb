@@ -25,6 +25,10 @@ public class PhotoStorage {
         final MutableLiveData<List<String>> resultLD = new MutableLiveData<>();
         final List<String> result = new ArrayList<>();
         final int[] filesCount = {files.size()};
+        if (files.isEmpty()) {
+            resultLD.postValue(result);
+        }
+
         for (String filePath : files) {
             Uri file = Uri.fromFile(new File(filePath));
             final StorageReference refToStore = reference.child(petId).child("images/" + file.getLastPathSegment());
