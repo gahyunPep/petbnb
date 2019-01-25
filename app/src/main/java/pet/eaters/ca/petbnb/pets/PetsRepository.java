@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -12,8 +13,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 import pet.eaters.ca.petbnb.core.Result;
 
 public class PetsRepository implements IPetsRepository {
@@ -28,10 +31,19 @@ public class PetsRepository implements IPetsRepository {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference pets = db.collection(PETS_COLLECTION);
+    private PhotoStorage photoStorage = new PhotoStorage();
 
     @Override
-    public LiveData<Result<Void>> post(PetData pet) {
-        return executeTask(pets.document().set(pet));
+    public LiveData<Result<Void>> post(final PetData pet) {
+        final DocumentReference createdPet = pets.document();
+        return Transformations.switchMap(photoStorage.uploadFiles(pet.getImages(), createdPet.getId()),
+                new Function<List<String>, LiveData<Result<Void>>>() {
+            @Override
+            public LiveData<Result<Void>> apply(List<String> input) {
+                pet.setImages(input);
+                return executeTask(createdPet.set(pet));
+            }
+        });
     }
 
     @Override
