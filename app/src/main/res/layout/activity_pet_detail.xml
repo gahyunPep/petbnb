@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".PetDetailActivity">
 
-    <ImageView
-        android:id="@+id/pet_image"
-        android:layout_width="374dp"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/image_slider"
+        android:layout_width="match_parent"
         android:layout_height="212dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
@@ -17,8 +17,9 @@
         android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/pet" />
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.viewpager.widget.ViewPager>
 
     <TextView
         android:id="@+id/pet_name"
@@ -31,7 +32,7 @@
         android:textColor="@android:color/black"
         android:textSize="30sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pet_image" />
+        app:layout_constraintTop_toBottomOf="@+id/image_slider" />
 
     <TextView
         android:id="@+id/pet_info"

@@ -47,7 +47,8 @@
         <activity android:name=".LoginActivity">
         </activity>
 
-        <activity android:name=".PetDetailActivity"></activity>
+        <activity android:name=".PetDetailActivity">
+        </activity>
     </application>
 
 </manifest>
