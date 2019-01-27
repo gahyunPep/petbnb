@@ -6,9 +6,9 @@ public class Pet {
     private String id;
     private PetData data;
 
-    public Pet(String id, String name, String info, String type, int size, List<String> images, String phone, String address, String zipCode, double latitude, double longitude, int age, int gender) {
+    public Pet(String id, String name, String info, String type, int size, List<String> images, String phone, String address, String zipCode, double latitude, double longitude, int age, int gender, String ownerId) {
         this.id = id;
-        this.data = new PetData(name, info, type, size, images, phone, address, zipCode, latitude, longitude, age, gender);
+        this.data = new PetData(name, info, type, size, images, phone, address, zipCode, latitude, longitude, age, gender, ownerId);
     }
 
     public Pet(String id, PetData petData) {

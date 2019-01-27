@@ -23,7 +23,7 @@ public class PetsRepository implements IPetsRepository {
     //Fake object for test purposes
     public static final PetData MOCK_PET = new PetData("Brian", "Family dog", "Dog", 1,new ArrayList<String>(),
             "+17789179146", "704 Royal Street, New Westminster, BC", "V3L 2T6", 49.203664, -122.912863,
-            26, 1);
+            26, 1, "someone");
 
 
     private static final String TAG = "PetsRepository";

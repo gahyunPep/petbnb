@@ -16,10 +16,14 @@ public class PetData {
     private int age;
     private int gender;
 
+    private String ownerId;
+
     //Empty constructor for firebase
     public PetData() {}
 
-    public PetData(String name, String info, String type, int size, List<String> images, String phone, String address, String zipCode, double latitude, double longitude, int age, int gender) {
+    public PetData(String name, String info, String type, int size, List<String> images, String phone,
+                   String address, String zipCode, double latitude, double longitude, int age, int gender,
+                   String ownerId) {
         this.name = name;
         this.info = info;
         this.type = type;
@@ -32,6 +36,7 @@ public class PetData {
         this.longitude = longitude;
         this.age = age;
         this.gender = gender;
+        this.ownerId = ownerId;
     }
 
     public String getName() {
@@ -128,5 +133,13 @@ public class PetData {
 
     public void setGender(int gender) {
         this.gender = gender;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 }
