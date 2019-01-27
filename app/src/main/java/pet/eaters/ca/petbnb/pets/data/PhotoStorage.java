@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.pets;
+package pet.eaters.ca.petbnb.pets.data;
 
 import android.net.Uri;
 

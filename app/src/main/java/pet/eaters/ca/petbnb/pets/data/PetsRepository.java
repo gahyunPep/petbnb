@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.pets;
+package pet.eaters.ca.petbnb.pets.data;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
