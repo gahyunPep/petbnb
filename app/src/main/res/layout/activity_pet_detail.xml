@@ -7,70 +7,69 @@
     tools:context=".PetDetailActivity">
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/image_slider"
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="212dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_height="300dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"></androidx.viewpager.widget.ViewPager>
 
-    </androidx.viewpager.widget.ViewPager>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/image_slide_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="252dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabGravity="center"
+        app:tabIndicatorColor="@color/colorAccent"
+        app:tabIndicatorHeight="0dp"></com.google.android.material.tabs.TabLayout>
 
     <TextView
-        android:id="@+id/pet_name"
+        android:id="@+id/pet_name_age"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
-        android:text="Scooby"
+        android:text="Scooby, 9"
         android:textColor="@android:color/black"
-        android:textSize="30sp"
+        android:textSize="36sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/image_slider" />
+        app:layout_constraintTop_toBottomOf="@+id/viewPager" />
 
     <TextView
         android:id="@+id/pet_info"
-        android:layout_width="wrap_content"
-        android:layout_height="19dp"
+        android:layout_width="384dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="Info"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="I am looking for a DogSitter to take care of my Golden Retriever."
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pet_size" />
-
-    <TextView
-        android:id="@+id/pet_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dog"
-        app:layout_constraintStart_toStartOf="@+id/pet_name"
-        app:layout_constraintTop_toBottomOf="@+id/pet_name" />
-
-    <TextView
-        android:id="@+id/pet_size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Big"
-        app:layout_constraintStart_toStartOf="@+id/pet_phone"
         app:layout_constraintTop_toBottomOf="@+id/pet_phone" />
+
+    <TextView
+        android:id="@+id/pet_size_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Big Dog"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/pet_name_age"
+        app:layout_constraintTop_toBottomOf="@+id/pet_name_age" />
 
     <TextView
         android:id="@+id/pet_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="604-XXX-XXXX"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/pet_city"
         app:layout_constraintTop_toBottomOf="@+id/pet_city" />
 
@@ -78,26 +77,22 @@
         android:id="@+id/pet_city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:text="Vancouver"
-        app:layout_constraintStart_toStartOf="@+id/pet_gender"
-        app:layout_constraintTop_toBottomOf="@+id/pet_gender" />
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pet_size_type" />
 
-    <TextView
-        android:id="@+id/pet_age"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="9 Years"
-        app:layout_constraintStart_toStartOf="@+id/pet_type"
-        app:layout_constraintTop_toBottomOf="@+id/pet_type" />
-
-    <TextView
+    <ImageView
         android:id="@+id/pet_gender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Male"
-        app:layout_constraintStart_toStartOf="@+id/pet_age"
-        app:layout_constraintTop_toBottomOf="@+id/pet_age" />
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/pet_name_age"
+        app:layout_constraintStart_toEndOf="@+id/pet_name_age"
+        app:layout_constraintTop_toTopOf="@+id/pet_name_age"
+        app:layout_constraintVertical_bias="0.52"
+        app:srcCompat="@drawable/ic_female" />
 </androidx.constraintlayout.widget.ConstraintLayout>

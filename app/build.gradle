@@ -19,6 +19,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary true
     }
     buildTypes {
         release {
