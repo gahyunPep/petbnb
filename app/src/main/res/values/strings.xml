@@ -4,4 +4,7 @@
     <string name="sign_in_btn_des">Google logo</string>
     <string name="facebook_application_id" translatable="false">232322257696832</string>
     <string name="facebook_login_protocol_scheme" translatable="false">232322257696832</string>
+    <string name="str_name">Name</string>
+    <string name="str_age">Age</string>
+    <string name="str_sex">sex</string>
 </resources>
