@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/selectedTrans"
-            android:button="null"
+            android:button="@null"
             android:drawableTop="@drawable/ic_female" />
 
         <RadioButton
