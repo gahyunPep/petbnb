@@ -10,42 +10,41 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameTxtInputLayout"
-        android:layout_width="277dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:hint="@string/str_name"
+        app:layout_constraintEnd_toStartOf="@+id/radioGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/nameEditTxt"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-             />
+            android:layout_height="match_parent" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
 
     <RadioGroup
-        android:layout_width="73dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:gravity="center_vertical|center_horizontal"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/nameTxtInputLayout"
         app:layout_constraintTop_toTopOf="@+id/nameTxtInputLayout">
 
         <RadioButton
             android:id="@+id/FemaleRadioBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:button="@null"
             android:drawableTop="@drawable/ic_female" />
@@ -59,24 +58,24 @@
             android:drawableTop="@drawable/ic_male" />
     </RadioGroup>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/ageTxtInputLayout"
-        android:layout_width="277dp"
+    <Spinner
+        android:id="@+id/petAgeSpinner"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:hint="@string/str_age"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/petTypeSpinner"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/nameTxtInputLayout" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ageEditTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-
-    </com.google.android.material.textfield.TextInputLayout>
+    <Spinner
+        android:id="@+id/petTypeSpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ageSpinner" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -52,7 +52,8 @@
         <activity android:name=".PetDetailActivity">
         </activity>
 
-        <activity android:name=".PetPostFormActivity"></activity>
+        <activity android:name=".pets.postform.PetPostFormActivity">
+        </activity>
 
     </application>
 

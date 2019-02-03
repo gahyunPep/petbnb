@@ -4,82 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    tools:context=".pets.postfrom.PetPostFormActivity">
+    tools:context=".pets.postform.PetPostFormActivity">
 
     <fragment
         android:id="@+id/petFormFragment"
-        android:name="pet.eaters.ca.petbnb.pets.postfrom.PetFormFragment"
+        android:name="pet.eaters.ca.petbnb.pets.postform.PetFormFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/pet_form_fragment" />
-
-
-    <ImageView
-        android:id="@+id/imageAdd1"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="29dp"
-        android:layout_marginLeft="29dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="43dp"
-        android:layout_marginRight="43dp"
-        android:contentDescription="@string/addImageDescription"
-        app:layout_constraintEnd_toStartOf="@+id/imageAdd2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/btn_add_photo" />
-
-    <ImageView
-        android:id="@+id/imageAdd2"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginBottom="391dp"
-        android:contentDescription="@string/addImageDescription"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageAdd3"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/btn_add_photo" />
-
-    <ImageView
-        android:id="@+id/imageAdd3"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="391dp"
-        android:contentDescription="@string/addImageDescription"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/btn_add_photo" />
-
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="319dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="33dp"
-        android:layout_marginLeft="33dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:layout_marginBottom="295dp"
-        android:drawableLeft="@drawable/ic_action_name"
-        android:ems="10"
-        android:hint="@string/nameHint"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageAdd2" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
-import pet.eaters.ca.petbnb.pets.postfrom.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         mPostFormBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, PetPostFormActivity.class));
+                startActivity(new Intent(MainActivity.this, pet.eaters.ca.petbnb.pets.postform.PetPostFormActivity.class));
             }
         });
 

@@ -5,4 +5,5 @@
     <color name="colorAccent">#D81B60</color>
     <color name="whiteTrans">#d8fffefe</color>
     <color name="selectedTrans">#d2d9d7d7</color>
+    <color name="light_gray">#c7c7c7</color>
 </resources>
