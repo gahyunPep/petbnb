@@ -40,18 +40,23 @@ public class PetFormFragment extends Fragment {
 
         Spinner petTypeSpinner = petFormLayout.findViewById(R.id.petTypeSpinner);
         Spinner petAgeSpinner = petFormLayout.findViewById(R.id.petAgeSpinner);
+        Spinner petSizeSpinner = petFormLayout.findViewById(R.id.petSizeSpinner);
 
         final List<String> petTypeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.petType_arr)));
         final List<String> ageList = getAgeArrList();
+        final List<String> petSizeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.petSize_arr)));
 
         ArrayAdapter<String> petTypeSpinnerArrAdaptor = getArrAdapter(petFormLayout, petTypeList);
         ArrayAdapter<String> petAgeSpinnerArrAdaptor = getArrAdapter(petFormLayout, ageList);
+        ArrayAdapter<String> petSizeSpinnerArrAdaptor = getArrAdapter(petFormLayout, petSizeList);
 
         petTypeSpinnerArrAdaptor.setDropDownViewResource(R.layout.pet_type_spinner_txtview);
         petAgeSpinnerArrAdaptor.setDropDownViewResource(R.layout.pet_type_spinner_txtview);
+        petSizeSpinnerArrAdaptor.setDropDownViewResource(R.layout.pet_type_spinner_txtview);
+
         petTypeSpinner.setAdapter(petTypeSpinnerArrAdaptor);
         petAgeSpinner.setAdapter(petAgeSpinnerArrAdaptor);
-
+        petSizeSpinner.setAdapter(petSizeSpinnerArrAdaptor);
 
         petAgeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

@@ -11,12 +11,21 @@
 
     <string name="addImageDescription">Add Image</string>
     <string name="nameHint">Name</string>
+    <string name="str_petDesc">Tell us more about your pet</string>
+    <string name="str_next">Next</string>
 
     <string-array name="petType_arr">
         <item>Pet Type</item>
         <item>Dogs</item>
         <item>Cats</item>
         <item>Others</item>
+    </string-array>
+
+    <string-array name="petSize_arr">
+        <item>Pet Size</item>
+        <item>Big</item>
+        <item>Medium</item>
+        <item>small</item>
     </string-array>
 
 </resources>

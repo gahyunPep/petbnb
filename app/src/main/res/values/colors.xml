@@ -2,7 +2,8 @@
 <resources>
     <color name="colorPrimary">#A36126</color>
     <color name="colorPrimaryDark">#6E3F28</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#ef9c37</color>
+    <color name="inputBackground">#f7efe0</color>
     <color name="whiteTrans">#d8fffefe</color>
     <color name="selectedTrans">#d2d9d7d7</color>
     <color name="light_gray">#c7c7c7</color>
