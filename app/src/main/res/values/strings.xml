@@ -13,6 +13,9 @@
     <string name="nameHint">Name</string>
     <string name="str_petDesc">Tell us more about your pet</string>
     <string name="str_next">Next</string>
+    <string name="str_over30">Over 30</string>
+    <string name="str_petNameError">How should we call him/her?</string>
+    <string name="str_petDescError">We will be so happy to hear about your pet!</string>
 
     <string-array name="petType_arr">
         <item>Pet Type</item>

@@ -9,13 +9,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +33,6 @@ public class PetFormFragment extends Fragment {
 
     private PetFormViewModel mViewModel;
 
-
     public static PetFormFragment newInstance() {
         return new PetFormFragment();
     }
@@ -37,6 +42,13 @@ public class PetFormFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         View petFormLayout = inflater.inflate(R.layout.pet_form_fragment, container, false);
+
+        Button nextBtn = petFormLayout.findViewById(R.id.nextBtn);
+        final EditText nameEditTxt = petFormLayout.findViewById(R.id.nameEditTxt);
+        final TextInputLayout nameInputLayout = petFormLayout.findViewById(R.id.nameTxtInputLayout);
+        EditText descEditTxt = petFormLayout.findViewById(R.id.petDescEditTxt);
+        final TextInputLayout descInputLayout = petFormLayout.findViewById(R.id.descTxtInputLayout);
+
 
         Spinner petTypeSpinner = petFormLayout.findViewById(R.id.petTypeSpinner);
         Spinner petAgeSpinner = petFormLayout.findViewById(R.id.petAgeSpinner);
@@ -82,6 +94,60 @@ public class PetFormFragment extends Fragment {
             }
         });
 
+        //input validation while it's writing
+        nameEditTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) {
+                    nameInputLayout.setError(getString(R.string.str_petNameError));
+                } else{
+                    nameInputLayout.setErrorEnabled(false);
+                }
+            }
+        });
+
+        //input validation while it's writing pet description
+        descEditTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) {
+                    descInputLayout.setError(getString(R.string.str_petDescError));
+                } else{
+                    descInputLayout.setErrorEnabled(false);
+                }
+            }
+        });
+
+        // once next btn clicked check input validation
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(nameEditTxt.equals(null)){
+
+                }
+            }
+        });
+
         return petFormLayout;
     }
 
@@ -95,11 +161,7 @@ public class PetFormFragment extends Fragment {
             return new ArrayAdapter<String>(petFormLayout.getContext(), R.layout.pet_type_spinner_txtview, dataList) {
             @Override
             public boolean isEnabled(int position) {
-                if (position == 0) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return position != 0;
             }
 
             @Override
@@ -122,11 +184,11 @@ public class PetFormFragment extends Fragment {
      */
     private ArrayList<String> getAgeArrList() {
         ArrayList<String> ageArrList = new ArrayList<>(32);
-        ageArrList.add("Age");
+        ageArrList.add(getString(R.string.str_age));
         for(int i=1; i<= 30; i++){
             ageArrList.add(String.valueOf(i));
         }
-        ageArrList.add("Over 30");
+        ageArrList.add(getString(R.string.str_over30));
         return ageArrList;
     }
 

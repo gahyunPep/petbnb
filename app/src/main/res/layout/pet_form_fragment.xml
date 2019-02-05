@@ -24,6 +24,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:hint="@string/str_name"
+            app:errorEnabled="true"
             app:boxBackgroundColor="@color/inputBackground"
             app:layout_constraintEnd_toStartOf="@+id/radioGroup"
             app:layout_constraintStart_toStartOf="parent"
