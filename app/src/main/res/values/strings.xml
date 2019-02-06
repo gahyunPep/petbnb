@@ -16,5 +16,7 @@
     <string name="login">Log in</string>
     <string name="createPost">Create Post</string>
     <string name="logOut">Log Out</string>
+    <string name="navigation_drawer_open">Open Navigation Drawer</string>
+    <string name="navigation_drawer_close">Close Navigation Drawer</string>
 
 </resources>
