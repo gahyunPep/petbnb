@@ -48,17 +48,18 @@
             app:layout_constraintTop_toTopOf="@+id/nameTxtInputLayout">
 
             <RadioButton
-                android:id="@+id/FemaleRadioBtn"
+                android:id="@+id/femaleRadioBtn"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
+                android:checked="true"
                 android:background="@drawable/ic_female"
                 android:button="@null"
                 android:foreground="?android:selectableItemBackground" />
 
             <RadioButton
-                android:id="@+id/MaleRadioBtn"
+                android:id="@+id/maleRadioBtn"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_margin="4dp"

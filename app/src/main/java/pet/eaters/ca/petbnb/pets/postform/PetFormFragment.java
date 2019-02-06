@@ -18,9 +18,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
@@ -41,18 +44,20 @@ public class PetFormFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        View petFormLayout = inflater.inflate(R.layout.pet_form_fragment, container, false);
+        final View petFormLayout = inflater.inflate(R.layout.pet_form_fragment, container, false);
 
         Button nextBtn = petFormLayout.findViewById(R.id.nextBtn);
         final EditText nameEditTxt = petFormLayout.findViewById(R.id.nameEditTxt);
         final TextInputLayout nameInputLayout = petFormLayout.findViewById(R.id.nameTxtInputLayout);
-        EditText descEditTxt = petFormLayout.findViewById(R.id.petDescEditTxt);
+        final EditText descEditTxt = petFormLayout.findViewById(R.id.petDescEditTxt);
         final TextInputLayout descInputLayout = petFormLayout.findViewById(R.id.descTxtInputLayout);
+        final RadioButton femaleBtn = petFormLayout.findViewById(R.id.femaleRadioBtn);
+        final RadioButton maleBtn = petFormLayout.findViewById(R.id.maleRadioBtn);
 
 
-        Spinner petTypeSpinner = petFormLayout.findViewById(R.id.petTypeSpinner);
-        Spinner petAgeSpinner = petFormLayout.findViewById(R.id.petAgeSpinner);
-        Spinner petSizeSpinner = petFormLayout.findViewById(R.id.petSizeSpinner);
+        final Spinner petTypeSpinner = petFormLayout.findViewById(R.id.petTypeSpinner);
+        final Spinner petAgeSpinner = petFormLayout.findViewById(R.id.petAgeSpinner);
+        final Spinner petSizeSpinner = petFormLayout.findViewById(R.id.petSizeSpinner);
 
         final List<String> petTypeList = new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.petType_arr)));
         final List<String> ageList = getAgeArrList();
@@ -110,7 +115,7 @@ public class PetFormFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
                     nameInputLayout.setError(getString(R.string.str_petNameError));
-                } else{
+                } else {
                     nameInputLayout.setErrorEnabled(false);
                 }
             }
@@ -132,18 +137,30 @@ public class PetFormFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 if (s.length() == 0) {
                     descInputLayout.setError(getString(R.string.str_petDescError));
-                } else{
+                } else {
                     descInputLayout.setErrorEnabled(false);
                 }
             }
         });
 
+
         // once next btn clicked check input validation
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(nameEditTxt.equals(null)){
-
+                // check user selected sex
+                if (descEditTxt.getText().toString().isEmpty()) {
+                    descInputLayout.setError(getString(R.string.str_petDescError));
+                }
+                if (nameEditTxt.getText().toString().isEmpty()) {
+                    nameInputLayout.setError(getString(R.string.str_petDescError));
+                }
+                if (nameEditTxt.getText().toString().isEmpty() || descEditTxt.getText().toString().isEmpty()
+                        ||petTypeSpinner.getSelectedItem().toString() == getString(R.string.str_petType)
+                        || petAgeSpinner.getSelectedItem().toString() == getString(R.string.str_age)
+                        ||petSizeSpinner.getSelectedItem().toString() == getString(R.string.str_petSize)
+                        || (!femaleBtn.isChecked()&&!maleBtn.isChecked())){
+                    Snackbar.make(v, "Hmmm, It seems like the form is not completed. ", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -153,12 +170,13 @@ public class PetFormFragment extends Fragment {
 
     /**
      * A Method returning ArrAdapter
+     *
      * @param petFormLayout
      * @param dataList
      * @return ArrayAdapter
      */
     private ArrayAdapter<String> getArrAdapter(View petFormLayout, List<String> dataList) {
-            return new ArrayAdapter<String>(petFormLayout.getContext(), R.layout.pet_type_spinner_txtview, dataList) {
+        return new ArrayAdapter<String>(petFormLayout.getContext(), R.layout.pet_type_spinner_txtview, dataList) {
             @Override
             public boolean isEnabled(int position) {
                 return position != 0;
@@ -180,12 +198,13 @@ public class PetFormFragment extends Fragment {
 
     /**
      * A method auto-generates pet age from 1-30
+     *
      * @return ageArrList
      */
     private ArrayList<String> getAgeArrList() {
         ArrayList<String> ageArrList = new ArrayList<>(32);
         ageArrList.add(getString(R.string.str_age));
-        for(int i=1; i<= 30; i++){
+        for (int i = 1; i <= 30; i++) {
             ageArrList.add(String.valueOf(i));
         }
         ageArrList.add(getString(R.string.str_over30));
