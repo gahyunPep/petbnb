@@ -10,7 +10,7 @@ import androidx.viewpager.widget.PagerAdapter;
 
 public class ViewPagerAdapter extends PagerAdapter {
 
-    public int[] viewPagerImages;
+    private int[] viewPagerImages;
     public ViewPagerAdapter(int[] viewPagerImages) {
 
         this.viewPagerImages = viewPagerImages;
