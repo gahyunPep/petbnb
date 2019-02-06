@@ -12,22 +12,21 @@
         android:layout_height="300dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></androidx.viewpager.widget.ViewPager>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/image_slide_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="252dp"
         android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/viewPager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:tabBackground="@drawable/tab_selector"
         app:tabGravity="center"
         app:tabIndicatorColor="@color/colorAccent"
-        app:tabIndicatorHeight="0dp"></com.google.android.material.tabs.TabLayout>
+        app:tabIndicatorHeight="0dp" />
 
     <TextView
         android:id="@+id/pet_name_age"
@@ -44,15 +43,21 @@
 
     <TextView
         android:id="@+id/pet_info"
-        android:layout_width="384dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:text="I am looking for a DogSitter to take care of my Golden Retriever."
         android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pet_phone" />
+        app:layout_constraintTop_toBottomOf="@+id/pet_phone"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/pet_size_type"
@@ -90,9 +95,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/pet_name_age"
         app:layout_constraintStart_toEndOf="@+id/pet_name_age"
-        app:layout_constraintTop_toTopOf="@+id/pet_name_age"
-        app:layout_constraintVertical_bias="0.52"
         app:srcCompat="@drawable/ic_female" />
 </androidx.constraintlayout.widget.ConstraintLayout>

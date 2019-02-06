@@ -19,7 +19,7 @@ public class PetDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_detail);
         viewPager = findViewById(R.id.viewPager);
-        viewPagerAdapter = new ViewPagerAdapter(this, petImages);
+        viewPagerAdapter = new ViewPagerAdapter(petImages);
         viewPager.setAdapter(viewPagerAdapter);
 
         imageSlideIndicator = findViewById(R.id.image_slide_indicator);
