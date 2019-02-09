@@ -46,9 +46,11 @@ public class PetsListFragment extends Fragment {
         adapter = new PetsListAdapter();
         petsRecyclerView.setAdapter(adapter);
 
+
         //TODO move live data and repository to the ViewModel
         PetsRepository repository = new PetsRepository();
         pets = repository.getPets();
+
         pets.observe(getViewLifecycleOwner(), new Observer<Result<List<Pet>>>() {
             @Override
             public void onChanged(Result<List<Pet>> listResult) {
