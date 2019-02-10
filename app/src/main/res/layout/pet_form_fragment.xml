@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/inputBackground">
+    android:background="@color/inputBackground"
+    tools:context=".MainActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context=".MainActivity">
-
+        android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameTxtInputLayout"
@@ -24,8 +22,8 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:hint="@string/str_name"
-            app:errorEnabled="true"
             app:boxBackgroundColor="@color/inputBackground"
+            app:errorEnabled="true"
             app:layout_constraintEnd_toStartOf="@+id/radioGroup"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -53,9 +51,9 @@
                 android:layout_height="36dp"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:checked="true"
                 android:background="@drawable/ic_female"
                 android:button="@null"
+                android:checked="true"
                 android:foreground="?android:selectableItemBackground" />
 
             <RadioButton
@@ -146,11 +144,7 @@
             android:text="@string/str_next"
             app:cornerRadius="50dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/descTxtInputLayout"
-            />
-
+            app:layout_constraintTop_toBottomOf="@+id/descTxtInputLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </ScrollView>

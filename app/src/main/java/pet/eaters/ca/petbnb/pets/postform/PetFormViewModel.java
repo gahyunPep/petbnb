@@ -2,6 +2,7 @@ package pet.eaters.ca.petbnb.pets.postform;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,31 +10,40 @@ import androidx.lifecycle.ViewModel;
 import pet.eaters.ca.petbnb.R;
 
 public class PetFormViewModel extends ViewModel {
+    public static final String PET_NAME ="petName";
+    public static final String PET_DESC ="petDesc";
+    public static final String PET_ELSE ="else";
+
     // TODO: Implement the ViewModel
     // this method need to be in the viewmodel
 
-    public Map validateData(String petName, String petDesc, int petType, int petAge, int petSize, int petSex) {
-        Map<String, String> validateMap = new HashMap();
+    public Map<String, Integer> validateData(String petName, String petDesc, int petType, int petAge, int petSize, int petSex) {
+        Map<String, Integer> validateMap = new HashMap<>();
 
         if (petName.isEmpty()) {
-            validateMap.put("petName", "pet name");
+            validateMap.put(PET_NAME, R.string.str_petNameError);
         }
         if (petDesc.isEmpty()) {
-            validateMap.put("petDesc", "pet description");
+            validateMap.put(PET_DESC, R.string.str_petDescError);
         }
-        if (petType == 0) {
-            validateMap.put("petType", "pet type");
+        if (petType == 0 || petAge == 0 || petSex == -1) {
+            validateMap.put(PET_ELSE, R.string.str_incompleteError);
         }
-        if (petAge == 0) {
-            validateMap.put("petAge", "pet age");
-        }
-        if (petSize == 0) {
-            validateMap.put("petSize", "pet size");
-        }
-        if (petSex == -1) {
-            validateMap.put("petSex", "pet gender");
-        }
-
         return validateMap;
+    }
+
+    /**
+     * A method auto-generates pet age from 1-30
+     *
+     * @return ageArrList
+     */
+    public ArrayList<String> getAgeArrList() {
+        ArrayList<String> ageArrList = new ArrayList<>(32);
+        ageArrList.add(String.valueOf(R.string.str_age));
+        for (int i = 1; i <= 30; i++) {
+            ageArrList.add(String.valueOf(i));
+        }
+        ageArrList.add(String.valueOf(R.string.str_over30));
+        return ageArrList;
     }
 }
