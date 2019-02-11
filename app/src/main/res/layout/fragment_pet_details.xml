@@ -25,8 +25,9 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:tabBackground="@drawable/tab_selector"
-        app:tabGravity="center"
         app:tabIndicatorColor="@color/colorAccent"
+        app:tabGravity="center"
+        app:tabMode="fixed"
         app:tabIndicatorHeight="0dp" />
 
     <TextView
@@ -36,7 +37,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
-        android:text="Scooby, 9"
         android:textColor="@android:color/black"
         android:textSize="36sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +52,6 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:text="I am looking for a DogSitter to take care of my Golden Retriever."
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,7 +63,6 @@
         android:id="@+id/pet_size_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Big Dog"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/pet_name_age"
@@ -74,7 +72,6 @@
         android:id="@+id/pet_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="604-XXX-XXXX"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/pet_city"
         app:layout_constraintTop_toBottomOf="@+id/pet_city" />
@@ -85,7 +82,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:text="Vancouver"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pet_size_type" />
@@ -97,8 +93,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginBottom="8dp"
+        android:contentDescription="@string/genderImageDescription"
         app:layout_constraintBottom_toBottomOf="@+id/pet_name_age"
-        app:layout_constraintStart_toEndOf="@+id/pet_name_age"
-        app:srcCompat="@drawable/ic_female" />
+        app:layout_constraintStart_toEndOf="@+id/pet_name_age" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
