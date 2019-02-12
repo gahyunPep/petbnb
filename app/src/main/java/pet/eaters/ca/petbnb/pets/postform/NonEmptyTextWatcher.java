@@ -7,12 +7,12 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class NonEmptyTextWatcher implements TextWatcher {
 
-    TextInputLayout mInputLayout;
-    String mErrorMsg;
+    private TextInputLayout mInputLayout;
+    private String mErrorMsg;
 
-    public NonEmptyTextWatcher(TextInputLayout mInputLayout, String mErrorMsg) {
-        this.mInputLayout = mInputLayout;
-        this.mErrorMsg = mErrorMsg;
+    public NonEmptyTextWatcher(TextInputLayout inputLayout, String errorMsg) {
+        mInputLayout = inputLayout;
+        mErrorMsg = errorMsg;
     }
 
     @Override

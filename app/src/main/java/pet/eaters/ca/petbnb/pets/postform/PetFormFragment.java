@@ -36,16 +36,16 @@ import static pet.eaters.ca.petbnb.pets.postform.PetFormViewModel.PET_NAME;
 public class PetFormFragment extends Fragment {
 
     private PetFormViewModel mViewModel;
-    EditText nameEditTxt;
-    TextInputLayout nameInputLayout;
-    EditText descEditTxt;
-    TextInputLayout descInputLayout;
-    RadioButton femaleBtn;
-    RadioButton maleBtn;
+    private EditText nameEditTxt;
+    private TextInputLayout nameInputLayout;
+    private EditText descEditTxt;
+    private TextInputLayout descInputLayout;
+    private RadioButton femaleBtn;
+    private RadioButton maleBtn;
 
-    Spinner petTypeSpinner;
-    Spinner petAgeSpinner;
-    Spinner petSizeSpinner;
+    private Spinner petTypeSpinner;
+    private Spinner petAgeSpinner;
+    private Spinner petSizeSpinner;
 
     public static PetFormFragment newInstance() {
         return new PetFormFragment();
@@ -54,7 +54,6 @@ public class PetFormFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.pet_form_fragment, container, false);
     }
 
@@ -126,7 +125,6 @@ public class PetFormFragment extends Fragment {
         validateData(petName, petDesc, petType, petAge, petSize, petSex);
     }
 
-    // this method need to be in the viewmodel
     // get a map from view model check if it's empty
     private void validateData(String petName, String petDesc, int petType, int petAge, int petSize, int petSex) {
         Map<String, Integer> errors = mViewModel.validateData(petName, petDesc, petType, petAge, petSize, petSex);
