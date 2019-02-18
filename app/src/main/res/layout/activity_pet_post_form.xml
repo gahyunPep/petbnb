@@ -7,6 +7,16 @@
     tools:context=".pets.postform.PetPostFormActivity">
 
     <fragment
+        android:id="@+id/petOwnerFormFragment"
+        android:name="pet.eaters.ca.petbnb.pets.postform.PetOwnerFormFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/pet_owner_form_fragment" />
+<!--
+    <fragment
         android:id="@+id/petFormFragment"
         android:name="pet.eaters.ca.petbnb.pets.postform.PetFormFragment"
         android:layout_width="0dp"
@@ -15,5 +25,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/pet_form_fragment" />
+  -->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

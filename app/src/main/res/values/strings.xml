@@ -20,6 +20,10 @@
     <string name="str_petType">Pet Type</string>
     <string name="str_petSize">Pet Size</string>
     <string name="str_incompleteError">Hmmm, It seems like the form is not completed.</string>
+    <string name="str_address">Address</string>
+    <string name="str_phone">Phone</string>
+    <string name="str_email">Email</string>
+    <string name="str_city">City</string>
 
 
     <string-array name="petType_arr">
@@ -34,6 +38,20 @@
         <item>Big</item>
         <item>Medium</item>
         <item>small</item>
+    </string-array>
+
+    <string-array name= "province_arr">
+        <item>Province</item>
+        <item>AB</item>
+        <item>BC</item>
+        <item>MB</item>
+        <item>NB</item>
+        <item>NL</item>
+        <item>NS</item>
+        <item>ON</item>
+        <item>PE</item>
+        <item>QC</item>
+        <item>SK</item>
     </string-array>
 
 </resources>
