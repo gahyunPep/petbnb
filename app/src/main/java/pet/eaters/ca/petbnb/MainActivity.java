@@ -36,38 +36,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mMapBtn = findViewById(R.id.mapBtn);
-        mPetDtlBtn = findViewById(R.id.petDetailBtn);
-        mPostFormBtn = findViewById(R.id.postFormBtn);
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-
-        mMapBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent moveToMapIntent = new Intent(MainActivity.this,MapsActivity.class);
-                startActivity(moveToMapIntent);
-            }
-        });
-
-        mPetDtlBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, PetDetailActivity.class));
-            }
-        });
-
-        mPostFormBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, PetPostFormActivity.class));
-            }
-        });
-
 
         //https://developer.android.com/training/implementing-navigation/nav-drawer#java
         NavigationView navigationView = findViewById(R.id.nav_view);

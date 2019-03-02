@@ -23,46 +23,8 @@
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/mapBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="MapActivity"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.517"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <Button
-                android:id="@+id/petDetailBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:text="Pet Details"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-                <Button
-                    android:id="@+id/postFormBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="172dp"
-                    android:text="Post Form"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/petDetailBtn" />
-
                 <fragment
-                    android:id="@+id/fragment"
+                    android:id="@+id/pet_details_fragment"
                     android:name="pet.eaters.ca.petbnb.pets.petsDetailsFragment.PetDetails"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -70,7 +32,6 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:layout="@layout/fragment_pet_details"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </FrameLayout>
     </LinearLayout>
 
