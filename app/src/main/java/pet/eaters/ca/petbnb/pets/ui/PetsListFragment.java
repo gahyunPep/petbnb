@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -46,9 +48,11 @@ public class PetsListFragment extends Fragment {
         adapter = new PetsListAdapter();
         petsRecyclerView.setAdapter(adapter);
 
+
         //TODO move live data and repository to the ViewModel
         PetsRepository repository = new PetsRepository();
         pets = repository.getPets();
+
         pets.observe(getViewLifecycleOwner(), new Observer<Result<List<Pet>>>() {
             @Override
             public void onChanged(Result<List<Pet>> listResult) {
