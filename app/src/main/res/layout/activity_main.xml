@@ -27,19 +27,8 @@
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-                <fragment
-                    android:id="@+id/pet_details_fragment"
-                    android:name="pet.eaters.ca.petbnb.pets.petsDetailsFragment.PetDetailsFragment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:layout="@layout/fragment_pet_details"/>
         </FrameLayout>
     </LinearLayout>
-
-
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
     <com.google.android.material.navigation.NavigationView

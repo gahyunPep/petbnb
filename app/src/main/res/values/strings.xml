@@ -5,13 +5,6 @@
     <string name="facebook_application_id" translatable="false">232322257696832</string>
     <string name="facebook_login_protocol_scheme" translatable="false">232322257696832</string>
 
-    <string name="str_name">Name</string>
-    <string name="str_age">Age</string>
-    <string name="str_sex">sex</string>
-
-    <string name="add_image_description">Add Image</string>
-    <string name="name_hint">Name</string>
-
     <string name="home">Home</string>
     <string name="login">Log in</string>
     <string name="create_post">Create Post</string>
@@ -19,5 +12,34 @@
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="genderImageDescription">Gender</string>
+
+    <string name="str_name">Name</string>
+    <string name="str_age">Age</string>
+    <string name="str_sex">sex</string>
+
+    <string name="str_petDesc">Tell us more about your pet</string>
+    <string name="str_next">Next</string>
+    <string name="str_over30">Over 30</string>
+    <string name="str_petNameError">How should we call him/her?</string>
+    <string name="str_petDescError">We will be so happy to hear about your pet!</string>
+
+    <string name="str_petType">Pet Type</string>
+    <string name="str_petSize">Pet Size</string>
+    <string name="str_incompleteError">Hmmm, It seems like the form is not completed.</string>
+
+
+    <string-array name="petType_arr">
+        <item>Pet Type</item>
+        <item>Dogs</item>
+        <item>Cats</item>
+        <item>Others</item>
+    </string-array>
+
+    <string-array name="petSize_arr">
+        <item>Pet Size</item>
+        <item>Big</item>
+        <item>Medium</item>
+        <item>small</item>
+    </string-array>
 
 </resources>
