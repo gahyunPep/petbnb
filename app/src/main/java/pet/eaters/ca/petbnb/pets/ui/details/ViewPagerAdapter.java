@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb;
+package pet.eaters.ca.petbnb.pets.ui.details;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -17,6 +17,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
+import pet.eaters.ca.petbnb.R;
 
 public class ViewPagerAdapter extends PagerAdapter {
 

@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.pets.postform;
+package pet.eaters.ca.petbnb.pets.ui.postform;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -29,9 +29,9 @@ import java.util.Map;
 
 import pet.eaters.ca.petbnb.R;
 
-import static pet.eaters.ca.petbnb.pets.postform.PetFormViewModel.PET_DESC;
-import static pet.eaters.ca.petbnb.pets.postform.PetFormViewModel.PET_ELSE;
-import static pet.eaters.ca.petbnb.pets.postform.PetFormViewModel.PET_NAME;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetFormViewModel.PET_DESC;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetFormViewModel.PET_ELSE;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetFormViewModel.PET_NAME;
 
 public class PetFormFragment extends Fragment {
 

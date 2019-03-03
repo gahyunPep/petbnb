@@ -1,7 +1,6 @@
-package pet.eaters.ca.petbnb.pets.petsDetailsFragment;
+package pet.eaters.ca.petbnb.pets.ui.details;
 
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 import pet.eaters.ca.petbnb.R;
-import pet.eaters.ca.petbnb.ViewPagerAdapter;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
 import pet.eaters.ca.petbnb.pets.data.PetsRepository;
