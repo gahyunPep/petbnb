@@ -11,12 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            android:id="@+id/toolbar"/>
+            android:id="@+id/toolbar"/></com.google.android.material.appbar.AppBarLayout>
 
         <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
         <FrameLayout
@@ -43,7 +45,6 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
         app:menu="@menu/navigation_view"
         app:headerLayout="@layout/nav_header"
         />
