@@ -26,7 +26,7 @@ import pet.eaters.ca.petbnb.pets.data.PetsRepository;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PetDetails extends Fragment {
+public class PetDetailsFragment extends Fragment {
     private ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     private TabLayout imageSlideIndicator;
@@ -43,7 +43,7 @@ public class PetDetails extends Fragment {
     private Integer petSizeData;
 
 
-    public PetDetails() {
+    public PetDetailsFragment() {
         // Required empty public constructor
     }
 
