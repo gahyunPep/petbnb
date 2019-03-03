@@ -50,9 +50,6 @@
 
         </activity>
 
-        <activity android:name=".PetDetailActivity">
-        </activity>
-
         <activity android:name=".PetPostFormActivity"></activity>
 
     </application>

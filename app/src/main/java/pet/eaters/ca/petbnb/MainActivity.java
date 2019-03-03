@@ -1,27 +1,17 @@
 package pet.eaters.ca.petbnb;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-
 
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import pet.eaters.ca.petbnb.pets.postfrom.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity {
-
-    Button mMapBtn;
-    Button mPetDtlBtn;
-    Button mPostFormBtn;
     private DrawerLayout mDrawerLayout;
 
     @Override
