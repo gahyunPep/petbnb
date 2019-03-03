@@ -59,6 +59,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         textUserName = navigationView.getHeaderView(0).findViewById(R.id.txtViewUser);
         avatar = navigationView.getHeaderView(0).findViewById(R.id.avatar);
         showUser(FirebaseAuth.getInstance().getCurrentUser());
+
+        showHomeFragment();
+    }
+
+    private void showHomeFragment() {
+        Fragment fragment = createFragmentForMenu(R.id.nav_home);
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
+        }
     }
 
     @Override
@@ -66,7 +75,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            int count = getSupportFragmentManager().getBackStackEntryCount();
+            if (count == 0) {
+                super.onBackPressed();
+            } else {
+                getSupportFragmentManager().popBackStack();
+            }
         }
     }
 
@@ -166,7 +180,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Fragment fragment = createFragmentForMenu(menuItem.getItemId());
                 if (fragment != null) {
                     getSupportFragmentManager().beginTransaction()
-                            .add(R.id.content_frame, fragment)
+                            .replace(R.id.content_frame, fragment)
+                            .addToBackStack(null)
                             .commit();
                 }
 

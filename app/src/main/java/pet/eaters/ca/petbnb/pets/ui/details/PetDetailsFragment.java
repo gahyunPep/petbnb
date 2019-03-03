@@ -25,6 +25,8 @@ import pet.eaters.ca.petbnb.pets.data.PetsRepository;
  * A simple {@link Fragment} subclass.
  */
 public class PetDetailsFragment extends Fragment {
+    private static String PET_ID = "PET_ID";
+
     private ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     private TabLayout imageSlideIndicator;
@@ -41,19 +43,28 @@ public class PetDetailsFragment extends Fragment {
     private Integer petSizeData;
 
 
-    public PetDetailsFragment() {
-        // Required empty public constructor
+    public static PetDetailsFragment newInstance(String petId) {
+        PetDetailsFragment fragment = new PetDetailsFragment();
+        Bundle args = new Bundle();
+        args.putString(PET_ID, petId);
+        fragment.setArguments(args);
+
+        return fragment;
     }
+
+    public PetDetailsFragment() { }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       View rootView =  inflater.inflate(R.layout.fragment_pet_details, container, false);
+        View rootView =  inflater.inflate(R.layout.fragment_pet_details, container, false);
         viewPager = rootView.findViewById(R.id.viewPager);
 
-        //viewPager.setAdapter(viewPagerAdapter);
+        assert getArguments() != null;
+        String petId = getArguments().getString(PET_ID);
+
         petNameAge = rootView.findViewById(R.id.pet_name_age);
         petInfo = rootView.findViewById(R.id.pet_info);
         petSizeType = rootView.findViewById(R.id.pet_size_type);
@@ -64,7 +75,7 @@ public class PetDetailsFragment extends Fragment {
         imageSlideIndicator = rootView.findViewById(R.id.image_slide_indicator);
         imageSlideIndicator.setupWithViewPager(viewPager, true);
         PetsRepository repository = new PetsRepository();
-        pet = repository.get("JCnSDwMtr2GLDiHnv94K");
+        pet = repository.get(petId);
         pet.observe(getViewLifecycleOwner(), new Observer<Result<Pet>>() {
             @Override
             public void onChanged(Result<Pet> petResult) {

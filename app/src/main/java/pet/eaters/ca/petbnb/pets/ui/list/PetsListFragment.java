@@ -18,15 +18,14 @@ import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
 import pet.eaters.ca.petbnb.pets.data.PetsRepository;
+import pet.eaters.ca.petbnb.pets.ui.details.PetDetailsFragment;
 
-public class PetsListFragment extends Fragment {
+public class PetsListFragment extends Fragment implements PetsListAdapter.OnPetClickListener {
 
     private PetsListViewModel mViewModel;
     private RecyclerView petsRecyclerView;
     PetsListAdapter adapter;
     LiveData<Result<List<Pet>>> pets;
-
-
 
     public static PetsListFragment newInstance() {
         return new PetsListFragment();
@@ -46,6 +45,7 @@ public class PetsListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(PetsListViewModel.class);
         adapter = new PetsListAdapter();
+        adapter.setPetClickListener(this);
         petsRecyclerView.setAdapter(adapter);
 
 
@@ -65,5 +65,11 @@ public class PetsListFragment extends Fragment {
             }
         });
         // TODO: Use the ViewModel
+    }
+
+    @Override
+    public void onPetClicked(Pet item, int position) {
+        PetDetailsFragment fragment = PetDetailsFragment.newInstance(item.getId());
+        getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
     }
 }
