@@ -28,6 +28,8 @@ public class PetsListFragment extends Fragment {
     PetsListAdapter adapter;
     LiveData<Result<List<Pet>>> pets;
 
+
+
     public static PetsListFragment newInstance() {
         return new PetsListFragment();
     }
