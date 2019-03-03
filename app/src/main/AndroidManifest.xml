@@ -45,8 +45,8 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
 
-
-        <activity android:name=".PetPostFormActivity"></activity>
+        <activity android:name=".pets.postform.PetPostFormActivity">
+        </activity>
 
     </application>
 

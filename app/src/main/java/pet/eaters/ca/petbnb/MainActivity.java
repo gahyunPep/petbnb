@@ -4,21 +4,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -28,7 +19,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pet.eaters.ca.petbnb.pets.login.LoginFragment;
-import pet.eaters.ca.petbnb.pets.postfrom.PetFormFragment;
+import pet.eaters.ca.petbnb.pets.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.PetsListFragment;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.OnFragmentInterationListener{
