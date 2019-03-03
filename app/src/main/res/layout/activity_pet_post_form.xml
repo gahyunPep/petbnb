@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".pets.postform.PetPostFormActivity">
+    tools:context=".pets.ui.postform.PetPostFormActivity">
 
     <fragment
         android:id="@+id/petFormFragment"
-        android:name="pet.eaters.ca.petbnb.pets.postform.PetFormFragment"
+        android:name="pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintLeft_toLeftOf="parent"

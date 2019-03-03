@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.pets.ui;
+package pet.eaters.ca.petbnb.pets.ui.list;
 
 import android.view.LayoutInflater;
 import android.view.View;

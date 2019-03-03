@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.pets.postform;
+package pet.eaters.ca.petbnb.pets.ui.postform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
