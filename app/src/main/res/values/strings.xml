@@ -9,13 +9,13 @@
     <string name="str_age">Age</string>
     <string name="str_sex">sex</string>
 
-    <string name="addImageDescription">Add Image</string>
-    <string name="nameHint">Name</string>
+    <string name="add_image_description">Add Image</string>
+    <string name="name_hint">Name</string>
 
     <string name="home">Home</string>
     <string name="login">Log in</string>
-    <string name="createPost">Create Post</string>
-    <string name="logOut">Log Out</string>
+    <string name="create_post">Create Post</string>
+    <string name="log_out">Log Out</string>
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="genderImageDescription">Gender</string>
