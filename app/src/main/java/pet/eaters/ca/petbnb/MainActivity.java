@@ -15,7 +15,10 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import pet.eaters.ca.petbnb.pets.postfrom.PetPostFormActivity;
+import pet.eaters.ca.petbnb.pets.postfrom.PhotoUploadFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,7 +63,16 @@ public class MainActivity extends AppCompatActivity {
         mPostFormBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, PetPostFormActivity.class));
+//                startActivity(new Intent(MainActivity.this, PetPostFormActivity.class))
+                mMapBtn.setVisibility(View.GONE);
+                mPetDtlBtn.setVisibility(View.GONE);
+                mPostFormBtn.setVisibility(View.GONE);
+
+                PhotoUploadFragment photoUpload = PhotoUploadFragment.newInstance();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.photo_upload_container, photoUpload);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
 

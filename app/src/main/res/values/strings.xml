@@ -18,5 +18,7 @@
     <string name="log_out">Log Out</string>
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
+    <string name="photo_camera">Camera</string>
+    <string name="photo_gallery">Gallery</string>
 
 </resources>
