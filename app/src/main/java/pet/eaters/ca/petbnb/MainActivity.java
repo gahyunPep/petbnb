@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     Button mMapBtn;
     Button mPetDtlBtn;
     Button mPostFormBtn;
+    Button mPhotoUploadBtn;
     private DrawerLayout mDrawerLayout;
 
     @Override
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         mPetDtlBtn = findViewById(R.id.petDetailBtn);
         mPostFormBtn = findViewById(R.id.postFormBtn);
         mDrawerLayout = findViewById(R.id.drawer_layout);
+        mPhotoUploadBtn = findViewById(R.id.photoUploadBtn);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -63,16 +65,14 @@ public class MainActivity extends AppCompatActivity {
         mPostFormBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                startActivity(new Intent(MainActivity.this, PetPostFormActivity.class))
-                mMapBtn.setVisibility(View.GONE);
-                mPetDtlBtn.setVisibility(View.GONE);
-                mPostFormBtn.setVisibility(View.GONE);
+                startActivity(new Intent(MainActivity.this, PetPostFormActivity.class));
+            }
+        });
 
-                PhotoUploadFragment photoUpload = PhotoUploadFragment.newInstance();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.photo_upload_container, photoUpload);
-                transaction.addToBackStack(null);
-                transaction.commit();
+        mPhotoUploadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addPhotoUploadFragment();
             }
         });
 
@@ -102,5 +102,18 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void addPhotoUploadFragment(){
+        mMapBtn.setVisibility(View.GONE);
+        mPetDtlBtn.setVisibility(View.GONE);
+        mPostFormBtn.setVisibility(View.GONE);
+        mPhotoUploadBtn.setVisibility(View.GONE);
+
+        PhotoUploadFragment photoUpload = PhotoUploadFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.photo_upload_container, photoUpload);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
