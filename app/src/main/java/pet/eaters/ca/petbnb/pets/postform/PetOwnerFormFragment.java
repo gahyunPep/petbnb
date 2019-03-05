@@ -3,12 +3,16 @@ package pet.eaters.ca.petbnb.pets.postform;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +22,23 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import pet.eaters.ca.petbnb.R;
+
+import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_ADDRESS;
+import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_CITY;
+import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_ELSE;
+import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_EMAIL;
+import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_NAME;
+import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_PHONE;
+import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_ZIPCODE;
 
 public class PetOwnerFormFragment extends Fragment {
 
@@ -71,6 +85,94 @@ public class PetOwnerFormFragment extends Fragment {
 
         nextButton = view.findViewById(R.id.nextBtn);
 
+        //input validation while it's writing
+        nameEditText.addTextChangedListener(new NonEmptyTextWatcher(nameInputLayout,getString(R.string.str_ownerNameError)));
+        addressEditText.addTextChangedListener(new NonEmptyTextWatcher(addressInputLayout, getString(R.string.str_ownerAddressError)));
+        cityEditText.addTextChangedListener(new NonEmptyTextWatcher(cityInputLayout, getString(R.string.str_ownerCityError)));
+        zipcodeEditText.addTextChangedListener(new NonEmptyTextWatcher(zipcodeInputLayout, getString(R.string.str_ownerZipcodeError)));
+        emailEditText.addTextChangedListener(new NonEmptyTextWatcher(emailInputLayout, getString(R.string.str_ownerEmailError)));
+        phoneEditText.addTextChangedListener(new NonEmptyTextWatcher(phoneInputLayout, getString(R.string.str_ownerPhoneError)));
+        phoneEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!s.toString().startsWith("+1")){
+                    phoneEditText.setText("+1");
+                }
+            }
+        });
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFormValues();
+            }
+        });
+    }
+
+    private void getFormValues() {
+        // name address city province zipcode email phone
+        String name, address, city, zipcode, email, phone;
+        int province;
+
+        name = nameEditText.getText().toString().trim();
+        address = addressEditText.getText().toString().trim();
+        city = cityEditText.getText().toString().trim();
+        zipcode = zipcodeEditText.getText().toString().trim();
+        email = emailEditText.getText().toString().trim();
+        phone = phoneEditText.getText().toString().trim();;
+        province = provinceSpinner.getSelectedItemPosition();
+        
+        validateData(name, address, city, zipcode, email, phone,province);
+    }
+
+    private void validateData(String name, String address, String city, String zipcode, String email, String phone, int province) {
+        Map<String, Integer> errors = mViewModel.validateData(name, address, city, zipcode, email, phone, province);
+        if(errors.isEmpty()){
+            //TODO go to next screen
+        }else{
+            bindErrors(errors);
+        }
+    }
+
+    private void bindErrors(Map<String, Integer> validationMap) {
+        for(Map.Entry<String, Integer> entry :  validationMap.entrySet()){
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            switch(key){
+                case OWNER_NAME:
+                    nameInputLayout.setError(getString(value));
+                    break;
+                case OWNER_ADDRESS:
+                    addressInputLayout.setError(getString(value));
+                    break;
+                case OWNER_CITY:
+                    cityInputLayout.setError(getString(value));
+                    break;
+                case OWNER_ZIPCODE:
+                    zipcodeInputLayout.setError(getString(value));
+                    break;
+                case OWNER_EMAIL:
+                    emailInputLayout.setError(getString(value));
+                    break;
+                case OWNER_PHONE:
+                    phoneInputLayout.setError(getString(value));
+                    break;
+                case OWNER_ELSE:
+                    Snackbar.make(getView(),getString(value),Snackbar.LENGTH_LONG).show();
+                    break;
+            }
+        }
+
     }
 
     private Spinner initSpinner(Spinner spinner, List<String> list) {
@@ -110,5 +212,4 @@ public class PetOwnerFormFragment extends Fragment {
             }
         };
     }
-
 }
