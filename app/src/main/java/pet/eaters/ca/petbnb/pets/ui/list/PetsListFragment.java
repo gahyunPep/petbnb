@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.pets.ui;
+package pet.eaters.ca.petbnb.pets.ui.list;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,8 +18,9 @@ import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
 import pet.eaters.ca.petbnb.pets.data.PetsRepository;
+import pet.eaters.ca.petbnb.pets.ui.details.PetDetailsFragment;
 
-public class PetsListFragment extends Fragment {
+public class PetsListFragment extends Fragment implements PetsListAdapter.OnPetClickListener {
 
     private PetsListViewModel mViewModel;
     private RecyclerView petsRecyclerView;
@@ -44,11 +45,14 @@ public class PetsListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(PetsListViewModel.class);
         adapter = new PetsListAdapter();
+        adapter.setPetClickListener(this);
         petsRecyclerView.setAdapter(adapter);
+
 
         //TODO move live data and repository to the ViewModel
         PetsRepository repository = new PetsRepository();
         pets = repository.getPets();
+
         pets.observe(getViewLifecycleOwner(), new Observer<Result<List<Pet>>>() {
             @Override
             public void onChanged(Result<List<Pet>> listResult) {
@@ -61,5 +65,11 @@ public class PetsListFragment extends Fragment {
             }
         });
         // TODO: Use the ViewModel
+    }
+
+    @Override
+    public void onPetClicked(Pet item, int position) {
+        PetDetailsFragment fragment = PetDetailsFragment.newInstance(item.getId());
+        getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
     }
 }
