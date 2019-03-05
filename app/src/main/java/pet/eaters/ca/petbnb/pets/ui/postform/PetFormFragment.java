@@ -89,8 +89,8 @@ public class PetFormFragment extends Fragment {
         });
     }
 
-    private ArrayList<String> getListFromResources(int petType_arr) {
-        return new ArrayList<>(Arrays.asList(getResources().getStringArray(petType_arr)));
+    private ArrayList<String> getListFromResources(int arr) {
+        return new ArrayList<>(Arrays.asList(getResources().getStringArray(arr)));
     }
 
     private Spinner initSpinner(Spinner spinner, List<String> list) {
