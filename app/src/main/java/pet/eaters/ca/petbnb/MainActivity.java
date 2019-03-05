@@ -27,9 +27,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
+import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
@@ -176,6 +179,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_login:
                 login();
                 break;
+            case R.id.nav_create_post:
+                goToPostCreationForm();
+                break;
             default:
                 Fragment fragment = createFragmentForMenu(menuItem.getItemId());
                 if (fragment != null) {
@@ -189,12 +195,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    private void goToPostCreationForm() {
+        Intent intent = new Intent(this, PetPostFormActivity.class);
+        startActivity(intent);
+    }
+
     private Fragment createFragmentForMenu(int id) {
         switch (id) {
             case R.id.nav_home:
                 return PetsListFragment.newInstance();
-            case R.id.nav_create_post:
-                return PetFormFragment.newInstance();
         }
         return null;
     }
