@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.pets.postfrom;
+package pet.eaters.ca.petbnb.pets.ui.postform;
 
 import androidx.lifecycle.ViewModel;
 
