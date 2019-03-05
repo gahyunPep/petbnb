@@ -74,7 +74,7 @@ public class PetFormFragment extends Fragment {
         maleBtn = view.findViewById(R.id.maleRadioBtn);
 
         petTypeSpinner = initSpinner((Spinner) view.findViewById(R.id.petTypeSpinner), getListFromResources(R.array.petType_arr));
-        petAgeSpinner = initSpinner((Spinner) view.findViewById(R.id.petAgeSpinner), mViewModel.getAgeArrList());
+        petAgeSpinner = initSpinner((Spinner) view.findViewById(R.id.petAgeSpinner), mViewModel.getAgeArrList(getContext()));
         petSizeSpinner = initSpinner((Spinner) view.findViewById(R.id.petSizeSpinner), getListFromResources(R.array.petSize_arr));
 
         //input validation while it's writing

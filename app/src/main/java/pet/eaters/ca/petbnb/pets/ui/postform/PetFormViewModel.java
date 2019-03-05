@@ -1,5 +1,7 @@
 package pet.eaters.ca.petbnb.pets.ui.postform;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +37,9 @@ public class PetFormViewModel extends ViewModel {
      *
      * @return ageArrList
      */
-    public ArrayList<String> getAgeArrList() {
+    public ArrayList<String> getAgeArrList(Context context) {
         ArrayList<String> ageArrList = new ArrayList<>(32);
-        ageArrList.add(String.valueOf(R.string.str_age));
+        ageArrList.add(context.getString(R.string.str_age));
         for (int i = 1; i <= 30; i++) {
             ageArrList.add(String.valueOf(i));
         }
