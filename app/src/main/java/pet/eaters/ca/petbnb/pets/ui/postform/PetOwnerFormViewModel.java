@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.pets.postform;
+package pet.eaters.ca.petbnb.pets.ui.postform;
 
 import android.util.Patterns;
 
