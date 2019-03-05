@@ -52,7 +52,7 @@
         <activity android:name=".PetDetailActivity">
         </activity>
 
-        <activity android:name=".pets.ui.postform.PetPostFormActivity">
+        <activity android:name=".pets.postform.PetPostFormActivity">
         </activity>
 
     </application>

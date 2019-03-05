@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.pets.ui.postform;
+package pet.eaters.ca.petbnb.pets.postform;
 
 import android.text.Editable;
 import android.text.TextWatcher;
