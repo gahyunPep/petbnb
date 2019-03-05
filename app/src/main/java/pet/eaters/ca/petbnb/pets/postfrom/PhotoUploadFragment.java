@@ -2,6 +2,7 @@ package pet.eaters.ca.petbnb.pets.postfrom;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -23,21 +24,23 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import pet.eaters.ca.petbnb.R;
 
+import static android.app.Activity.RESULT_OK;
+
 public class PhotoUploadFragment extends Fragment {
 
     private PhotoUploadViewModel mViewModel;
     private Button addCameraBtn;
     private Button addGalleryBtn;
     private final int REQUEST_IMAGE_CAPTURE = 1;
-    private final int RESULT_LOAD_IMG = 2;
+    private final int REQUEST_LOAD_GALLERY = 2;
 
     public static PhotoUploadFragment newInstance() {
         return new PhotoUploadFragment();
     }
 
-    Bitmap[] photos_array = new Bitmap[6];
+    Bitmap[] bitmapArray = new Bitmap[6];
     int nextIndex = 0;
-    PhotoUploadAdapter adapter;
+    PhotoUploadAdapter photoUploadAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -63,8 +66,8 @@ public class PhotoUploadFragment extends Fragment {
             }
         });
 
-        adapter = new PhotoUploadAdapter(view.getContext(), photos_array);
-        photosView.setAdapter(adapter);
+        photoUploadAdapter = new PhotoUploadAdapter(view.getContext(), bitmapArray);
+        photosView.setAdapter(photoUploadAdapter);
         return view;
     }
 
@@ -90,32 +93,38 @@ public class PhotoUploadFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
-            if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == getActivity().RESULT_OK) {
-                Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                addToPhotoArray(imageBitmap);
+            switch (requestCode) {
+                case REQUEST_IMAGE_CAPTURE:
+                    if (resultCode == RESULT_OK) {
+                        Bundle extras = data.getExtras();
+                        Bitmap bitmapFromCamera = (Bitmap) extras.get("data");
+                        addToBitmapArray(bitmapFromCamera);
+                    }
+                    break;
+                case REQUEST_LOAD_GALLERY:
+                    if (resultCode == RESULT_OK) {
+                        Uri imageUri = data.getData();
+                        Bitmap bitmapFromGallery = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                        addToBitmapArray(bitmapFromGallery);
+                    }
+                    break;
 
-            } else if (requestCode == RESULT_LOAD_IMG && resultCode == getActivity().RESULT_OK) {
-                Uri imageUri = data.getData();
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
-                addToPhotoArray(bitmap);
             }
-        } catch (Exception e){
-            Toast.makeText(getContext(), e.toString() , Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
         }
-        adapter.updateArray(photos_array);
-        adapter.notifyDataSetChanged();
-
+        photoUploadAdapter.updateArray(bitmapArray);
+        photoUploadAdapter.notifyDataSetChanged();
     }
 
     public void addFromGallery() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
+        startActivityForResult(photoPickerIntent, REQUEST_LOAD_GALLERY);
     }
 
-    public void addToPhotoArray(Bitmap bitmap){
-        photos_array[nextIndex] = bitmap;
+    public void addToBitmapArray(Bitmap bitmap) {
+        bitmapArray[nextIndex] = bitmap;
         ++nextIndex;
     }
 }
