@@ -1,16 +1,14 @@
-package pet.eaters.ca.petbnb.pets.postform;
+package pet.eaters.ca.petbnb.pets.ui.postform;
 
 import androidx.lifecycle.ViewModelProviders;
 
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -32,13 +30,13 @@ import java.util.Map;
 
 import pet.eaters.ca.petbnb.R;
 
-import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_ADDRESS;
-import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_CITY;
-import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_ELSE;
-import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_EMAIL;
-import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_NAME;
-import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_PHONE;
-import static pet.eaters.ca.petbnb.pets.postform.PetOwnerFormViewModel.OWNER_ZIPCODE;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_ADDRESS;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_CITY;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_ELSE;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_EMAIL;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_NAME;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_PHONE;
+import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_ZIPCODE;
 
 public class PetOwnerFormFragment extends Fragment {
 

@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
-import pet.eaters.ca.petbnb.pets.postform.PetPostFormActivity;
+import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity {
 
