@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView textUserName;
     private CircleImageView avatar;
     private static final int RC_SIGN_IN = 9001;
+    private Button petFormBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         showUser(FirebaseAuth.getInstance().getCurrentUser());
 
         showHomeFragment();
+
+        // for testing form fragments
+        petFormBtn = findViewById(R.id.postFormBtn);
+        petFormBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,PetPostFormActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void showHomeFragment() {

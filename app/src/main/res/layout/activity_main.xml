@@ -26,7 +26,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
-<<<<<<< HEAD
             android:layout_height="match_parent">
 
             <FrameLayout
@@ -84,9 +83,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-=======
-            android:layout_height="match_parent"/>
->>>>>>> master
+
     </LinearLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->

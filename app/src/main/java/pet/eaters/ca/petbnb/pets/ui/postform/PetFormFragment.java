@@ -1,5 +1,6 @@
 package pet.eaters.ca.petbnb.pets.ui.postform;
 
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.graphics.Color;
@@ -47,6 +48,8 @@ public class PetFormFragment extends Fragment {
     private Spinner petAgeSpinner;
     private Spinner petSizeSpinner;
 
+    private Button nextButton;
+
     public static PetFormFragment newInstance() {
         return new PetFormFragment();
     }
@@ -54,7 +57,20 @@ public class PetFormFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.pet_form_fragment, container, false);
+        //https://youtu.be/CVME9yW54mY : Click next bring in another fragment
+        View view = inflater.inflate(R.layout.pet_form_fragment, container, false);
+        nextButton = view.findViewById(R.id.petFormNextBtn);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PetOwnerFormFragment ownerFormFragment = new PetOwnerFormFragment();
+                FragmentManager manager = getFragmentManager();
+//                manager.beginTransaction()
+//                        .replace(v.getParent().getId(), ownerFormFragment, ownerFormFragment.getTag())
+//                        .commit();
+            }
+        });
+        return view;
     }
 
     @Override
@@ -65,7 +81,7 @@ public class PetFormFragment extends Fragment {
 
         View view = getView();
         assert view != null;
-        Button nextBtn = view.findViewById(R.id.nextBtn);
+        Button nextBtn = view.findViewById(R.id.petFormNextBtn);
         nameEditTxt = view.findViewById(R.id.nameEditTxt);
         nameInputLayout = view.findViewById(R.id.nameTxtInputLayout);
         descEditTxt = view.findViewById(R.id.petDescEditTxt);

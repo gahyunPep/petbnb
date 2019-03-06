@@ -81,7 +81,7 @@ public class PetOwnerFormFragment extends Fragment {
 
         provinceSpinner = initSpinner((Spinner) view.findViewById(R.id.provinceSpinner), getListFromResources(R.array.province_arr));
 
-        nextButton = view.findViewById(R.id.nextBtn);
+        nextButton = view.findViewById(R.id.petFormNextBtn);
 
         //input validation while it's writing
         nameEditText.addTextChangedListener(new NonEmptyTextWatcher(nameInputLayout,getString(R.string.str_ownerNameError)));
