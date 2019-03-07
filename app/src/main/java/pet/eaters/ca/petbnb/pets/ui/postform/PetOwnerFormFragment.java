@@ -81,7 +81,7 @@ public class PetOwnerFormFragment extends Fragment {
 
         provinceSpinner = initSpinner((Spinner) view.findViewById(R.id.provinceSpinner), getListFromResources(R.array.province_arr));
 
-        nextButton = view.findViewById(R.id.petFormNextBtn);
+        nextButton = view.findViewById(R.id.formNextBtn);
 
         //input validation while it's writing
         nameEditText.addTextChangedListener(new NonEmptyTextWatcher(nameInputLayout,getString(R.string.str_ownerNameError)));
@@ -117,6 +117,13 @@ public class PetOwnerFormFragment extends Fragment {
         });
     }
 
+    private void getNextFormFragment() {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.formFragmentContainer, new PhotoUploadFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+
     private void getFormValues() {
         // name address city province zipcode email phone
         String name, address, city, zipcode, email, phone;
@@ -136,7 +143,7 @@ public class PetOwnerFormFragment extends Fragment {
     private void validateData(String name, String address, String city, String zipcode, String email, String phone, int province) {
         Map<String, Integer> errors = mViewModel.validateData(name, address, city, zipcode, email, phone, province);
         if(errors.isEmpty()){
-            //TODO go to next screen
+            getNextFormFragment();
         }else{
             bindErrors(errors);
         }
