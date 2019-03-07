@@ -1,6 +1,7 @@
 package pet.eaters.ca.petbnb.pets.ui.postform;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import pet.eaters.ca.petbnb.R;
 
 import android.os.Bundle;
