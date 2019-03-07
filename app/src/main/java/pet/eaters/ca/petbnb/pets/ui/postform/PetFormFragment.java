@@ -108,8 +108,8 @@ public class PetFormFragment extends Fragment {
         String petName, petDesc;
         int petType, petAge, petSize, petSex;
 
-        petName = nameEditTxt.getText().toString();
-        petDesc = descEditTxt.getText().toString();
+        petName = nameEditTxt.getText().toString().trim();
+        petDesc = descEditTxt.getText().toString().trim();
         petType = petTypeSpinner.getSelectedItemPosition();
         petAge = petAgeSpinner.getSelectedItemPosition();
         petSize = petSizeSpinner.getSelectedItemPosition();
@@ -146,10 +146,10 @@ public class PetFormFragment extends Fragment {
             Integer value = entry.getValue();
             switch (key) {
                 case PET_NAME:
-                    descInputLayout.setError(getString(value));
+                    nameInputLayout.setError(getString(value));
                     break;
                 case PET_DESC:
-                    nameInputLayout.setError(getString(value));
+                    descInputLayout.setError(getString(value));
                     break;
                 case PET_ELSE:
                     Snackbar.make(getView(), value, Snackbar.LENGTH_LONG).show();
