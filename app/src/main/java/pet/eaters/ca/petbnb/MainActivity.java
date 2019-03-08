@@ -28,6 +28,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import de.hdodenhof.circleimageview.CircleImageView;
+import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
 
@@ -195,6 +196,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return PetsListFragment.newInstance();
             case R.id.nav_create_post:
                 return PetFormFragment.newInstance();
+            case R.id.nav_qrcode:
+                return QRScanFragment.newInstance();
         }
         return null;
     }

@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb;
+package pet.eaters.ca.petbnb.pets.ui.QRScan;
 
 import android.graphics.Bitmap;
 import android.widget.ImageView;

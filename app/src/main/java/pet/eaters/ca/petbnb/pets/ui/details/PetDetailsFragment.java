@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
-import pet.eaters.ca.petbnb.QRCodeGenAndReader;
+import pet.eaters.ca.petbnb.pets.ui.QRScan.QRCodeGenAndReader;
 import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
