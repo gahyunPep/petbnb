@@ -66,7 +66,7 @@ public class PhotoUploadFragment extends Fragment {
             }
         });
 
-        photoUploadAdapter = new PhotoUploadAdapter(view.getContext(), bitmapArray);
+        photoUploadAdapter = new PhotoUploadAdapter(bitmapArray);
         photosView.setAdapter(photoUploadAdapter);
         return view;
     }

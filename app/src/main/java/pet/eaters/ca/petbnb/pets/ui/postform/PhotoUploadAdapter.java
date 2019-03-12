@@ -13,7 +13,6 @@ import pet.eaters.ca.petbnb.R;
 
 public class PhotoUploadAdapter extends RecyclerView.Adapter<PhotoUploadAdapter.ViewHolder> {
     private Bitmap[] bitmapArray;
-    private LayoutInflater layoutInflater;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView photoImageView;
@@ -24,8 +23,7 @@ public class PhotoUploadAdapter extends RecyclerView.Adapter<PhotoUploadAdapter.
         }
     }
 
-    public PhotoUploadAdapter(Context context, Bitmap[] bitmapArray) {
-        this.layoutInflater = LayoutInflater.from(context);
+    public PhotoUploadAdapter(Bitmap[] bitmapArray) {
         this.bitmapArray = bitmapArray;
     }
 
@@ -42,6 +40,7 @@ public class PhotoUploadAdapter extends RecyclerView.Adapter<PhotoUploadAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.photo_item, parent, false);
         return new ViewHolder(view);
     }
