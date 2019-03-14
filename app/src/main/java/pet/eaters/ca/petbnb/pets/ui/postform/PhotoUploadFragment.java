@@ -1,6 +1,8 @@
 package pet.eaters.ca.petbnb.pets.ui.postform;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -19,11 +21,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.content.CursorLoader;
@@ -33,6 +37,7 @@ import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.pets.data.PhotoStorage;
 
 import static android.app.Activity.RESULT_OK;
+import static com.google.common.reflect.Reflection.initialize;
 
 public class PhotoUploadFragment extends Fragment {
 
@@ -42,14 +47,17 @@ public class PhotoUploadFragment extends Fragment {
     private Button uploadBtn;
     private final int REQUEST_IMAGE_CAPTURE = 1;
     private final int REQUEST_LOAD_GALLERY = 2;
+    private final int REQUEST_ASK_PERMISSION = 3;
+
+    List<Bitmap> imageList;
+    List<String> imagePathList;
+    PhotoUploadAdapter photoUploadAdapter;
+    final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     public static PhotoUploadFragment newInstance() {
         return new PhotoUploadFragment();
     }
 
-    List<Bitmap> imageList;
-    List<String> imagePathList;
-    PhotoUploadAdapter photoUploadAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -57,6 +65,8 @@ public class PhotoUploadFragment extends Fragment {
         View view = inflater.inflate(R.layout.photo_upload_fragment, container, false);
         imageList = new ArrayList<>();
         imagePathList = new ArrayList<>();
+
+        checkPermissions();
 
         RecyclerView photosView = view.findViewById(R.id.photosView);
         photosView.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
@@ -82,8 +92,8 @@ public class PhotoUploadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 uploadToFireStore();
-                Toast.makeText(getContext(),"Upload Successful", Toast.LENGTH_SHORT).show();
-                getFragmentManager().popBackStack();
+                Toast.makeText(getContext(), "Upload Successful", Toast.LENGTH_SHORT).show();
+                exitFragment();
             }
         });
 
@@ -161,7 +171,7 @@ public class PhotoUploadFragment extends Fragment {
     public void addToBitmapList(Bitmap bitmap) {
         imageList.add(bitmap);
     }
-    
+
     public String getPathFromUri(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
         String result = null;
@@ -191,5 +201,49 @@ public class PhotoUploadFragment extends Fragment {
                 storageDir      /* directory */
         );
         return image;
+    }
+
+    private void exitFragment() {
+        getFragmentManager().popBackStack();
+    }
+
+    // Source: https://developer.here.com/documentation/android-premium/dev_guide/topics/request-android-permissions.html
+    private void checkPermissions() {
+        final List<String> missingPermissions = new ArrayList<>();
+
+        for (String permission : PERMISSIONS) {
+            final int result = ContextCompat.checkSelfPermission(getContext(), permission);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                missingPermissions.add(permission);
+            }
+        }
+
+        if (!missingPermissions.isEmpty()) {
+            final String[] permissions = missingPermissions.toArray(new String[missingPermissions.size()]);
+            requestPermissions(permissions, REQUEST_ASK_PERMISSION);
+        } else {
+            final int[] grantResults = new int[PERMISSIONS.length];
+            Arrays.fill(grantResults, PackageManager.PERMISSION_GRANTED);
+            onRequestPermissionsResult(REQUEST_ASK_PERMISSION, PERMISSIONS, grantResults);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_ASK_PERMISSION:
+                for (int index = permissions.length - 1; index >= 0; --index) {
+                    if (grantResults[index] != PackageManager.PERMISSION_GRANTED) {
+                        // exit fragment if permission not granted
+                        Toast.makeText(getContext(), "Required permission '" + permissions[index]
+                                + "' not granted, exiting", Toast.LENGTH_LONG).show();
+                        exitFragment();
+                        return;
+                    }
+                }
+                // all permissions granted
+                initialize();
+                break;
+        }
     }
 }
