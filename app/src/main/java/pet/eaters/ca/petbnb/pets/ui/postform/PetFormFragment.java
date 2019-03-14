@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import pet.eaters.ca.petbnb.R;
+import pet.eaters.ca.petbnb.pets.data.PetForm;
 
 import static pet.eaters.ca.petbnb.pets.ui.postform.PetFormViewModel.PET_DESC;
 import static pet.eaters.ca.petbnb.pets.ui.postform.PetFormViewModel.PET_ELSE;
@@ -92,9 +93,9 @@ public class PetFormFragment extends Fragment {
         });
     }
 
-    private void getNextFormFragment() {
+    private void goToNextFormFragment(PetForm petForm) {
         getFragmentManager().beginTransaction()
-                .replace(R.id.formFragmentContainer, new PetOwnerFormFragment())
+                .replace(R.id.formFragmentContainer, PetOwnerFormFragment.newInstance(petForm))
                 .addToBackStack(null)
                 .commit();
     }
@@ -116,7 +117,7 @@ public class PetFormFragment extends Fragment {
      */
     private void getFormValues() {
         String petName, petDesc;
-        int petType, petAge, petSize, petSex;
+        int petType, petAge, petSize, petGender;
 
         petName = nameEditTxt.getText().toString().trim();
         petDesc = descEditTxt.getText().toString().trim();
@@ -125,21 +126,22 @@ public class PetFormFragment extends Fragment {
         petSize = petSizeSpinner.getSelectedItemPosition();
 
         if (femaleBtn.isChecked()) {
-            petSex = 0;
+            petGender = 0;
         } else if (maleBtn.isChecked()) {
-            petSex = 1;
+            petGender = 1;
         } else {
-            petSex = -1;
+            petGender = -1;
         }
 
-        validateData(petName, petDesc, petType, petAge, petSize, petSex);
+        validateData(petName, petDesc, petType, petAge, petSize, petGender);
     }
 
     // get a map from view model check if it's empty
-    private void validateData(String petName, String petDesc, int petType, int petAge, int petSize, int petSex) {
-        Map<String, Integer> errors = mViewModel.validateData(petName, petDesc, petType, petAge, petSize, petSex);
+    private void validateData(String petName, String petDesc, int petType, int petAge, int petSize, int petGender) {
+        Map<String, Integer> errors = mViewModel.validateData(petName, petDesc, petType, petAge, petSize, petGender);
         if (errors.isEmpty()) {
-            getNextFormFragment();
+            PetForm petForm = new PetForm(petName, petGender, petType, petAge, petSize, petDesc);
+            goToNextFormFragment(petForm);
         } else {
             bindErrors(errors);
         }

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import pet.eaters.ca.petbnb.R;
+import pet.eaters.ca.petbnb.pets.data.PetForm;
+import pet.eaters.ca.petbnb.pets.data.PetOwnerForm;
 
 import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_ADDRESS;
 import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_CITY;
@@ -47,8 +49,24 @@ public class PetOwnerFormFragment extends Fragment {
     private Spinner provinceSpinner;
     private Button nextButton;
 
-    public static PetOwnerFormFragment newInstance() {
-        return new PetOwnerFormFragment();
+    private PetForm petForm;
+
+    private static final String PET_FORM_KEY = "petForm";
+
+    public static PetOwnerFormFragment newInstance(PetForm petForm) {
+        PetOwnerFormFragment fragment = new PetOwnerFormFragment();
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(PET_FORM_KEY, petForm);
+        fragment.setArguments(arguments);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(getArguments()!=null){
+            petForm = getArguments().getParcelable(PET_FORM_KEY);
+        }
     }
 
     @Override
@@ -117,9 +135,9 @@ public class PetOwnerFormFragment extends Fragment {
         });
     }
 
-    private void getNextFormFragment() {
+    private void goToNextFormFragment(PetForm petForm, PetOwnerForm petOwnerForm) {
         getFragmentManager().beginTransaction()
-                .replace(R.id.formFragmentContainer, new PhotoUploadFragment())
+                .replace(R.id.formFragmentContainer, PhotoUploadFragment.newInstance(petForm, petOwnerForm))
                 .addToBackStack(null)
                 .commit();
     }
@@ -143,7 +161,8 @@ public class PetOwnerFormFragment extends Fragment {
     private void validateData(String name, String address, String city, String zipcode, String email, String phone, int province) {
         Map<String, Integer> errors = mViewModel.validateData(name, address, city, zipcode, email, phone, province);
         if(errors.isEmpty()){
-            getNextFormFragment();
+            PetOwnerForm petOwnerForm = new PetOwnerForm(name, address, city, province, zipcode, email, phone);
+            goToNextFormFragment(petForm, petOwnerForm);
         }else{
             bindErrors(errors);
         }
