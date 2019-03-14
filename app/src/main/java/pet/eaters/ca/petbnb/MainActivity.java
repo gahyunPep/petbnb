@@ -67,16 +67,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         showUser(FirebaseAuth.getInstance().getCurrentUser());
 
         showHomeFragment();
-
-        // for testing form fragments
-        petFormBtn = findViewById(R.id.postFormBtn);
-        petFormBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,PetPostFormActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     private void showHomeFragment() {
