@@ -64,15 +64,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showHomeFragment() {
-        Fragment fragment = createFragmentForMenu(R.id.nav_home);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment != null) {
+            return;
+        }
+
+        fragment = createFragmentForMenu(R.id.nav_home);
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     @Override
