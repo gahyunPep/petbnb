@@ -115,8 +115,8 @@ public class PetDetailsFragment extends Fragment {
                 viewPager.setAdapter(viewPagerAdapter);
             }
         });
-        petQRCodeImg = new QRCodeGenAndReader(QRCodeImg, petId);
-        petQRCodeImg.generateQRCode();
+        petQRCodeImg = new QRCodeGenAndReader();
+        petQRCodeImg.generateQRCode(QRCodeImg, petId);
         return rootView;
     }
 }
