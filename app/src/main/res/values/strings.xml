@@ -14,6 +14,8 @@
     <string name="genderImageDescription">Gender</string>
     <string name="ImageDes">Avatar</string>
 
+    <string name="QRDescription">QR Image Code</string>
+
     <string name="str_name">Name</string>
     <string name="str_age">Age</string>
     <string name="str_sex">sex</string>
@@ -27,7 +29,17 @@
     <string name="str_petType">Pet Type</string>
     <string name="str_petSize">Pet Size</string>
     <string name="str_incompleteError">Hmmm, It seems like the form is not completed.</string>
-    <string name="QRDescription">QR Image Code</string>
+    <string name="str_phone">(+Country Code) Phone</string>
+    <string name="str_address">Address</string>
+    <string name="str_email">Email</string>
+    <string name="str_city">City</string>
+    <string name="str_zipCode">Zip Code</string>
+    <string name="str_ownerNameError">How do you like to be called?</string>
+    <string name="str_ownerAddressError">Please entre your address</string>
+    <string name="str_ownerCityError">Which city are you living in?</string>
+    <string name="str_ownerZipcodeError">Please enter your zip code</string>
+    <string name="str_ownerEmailError">Please enter your valid email address</string>
+    <string name="str_ownerPhoneError">Please enter your valid phone numbers with (+country code)</string>
 
 
     <string-array name="petType_arr">
@@ -42,6 +54,20 @@
         <item>Big</item>
         <item>Medium</item>
         <item>small</item>
+    </string-array>
+
+    <string-array name= "province_arr">
+        <item>Province</item>
+        <item>AB</item>
+        <item>BC</item>
+        <item>MB</item>
+        <item>NB</item>
+        <item>NL</item>
+        <item>NS</item>
+        <item>ON</item>
+        <item>PE</item>
+        <item>QC</item>
+        <item>SK</item>
     </string-array>
 
 </resources>
