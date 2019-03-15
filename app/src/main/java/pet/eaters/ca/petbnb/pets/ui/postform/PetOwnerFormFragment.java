@@ -104,7 +104,7 @@ public class PetOwnerFormFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if(!s.toString().startsWith("+1")){
-                    phoneEditText.setText("+1");
+                    s.append("+1", 0, 2);
                 }
             }
         });
@@ -199,14 +199,13 @@ public class PetOwnerFormFragment extends Fragment {
 
             @Override
             public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getDropDownView(position, convertView, parent);
-                TextView textView = (TextView) view;
-                if (position == 0) {
-                    textView.setTextColor(Color.GRAY);
-                } else {
+                TextView textView = (TextView) super.getDropDownView(position, convertView, parent);
+                if (isEnabled(position)) {
                     textView.setTextColor(Color.BLACK);
+                } else {
+                    textView.setTextColor(Color.GRAY);
                 }
-                return view;
+                return textView;
             }
         };
     }
