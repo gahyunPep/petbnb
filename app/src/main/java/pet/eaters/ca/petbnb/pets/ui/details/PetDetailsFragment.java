@@ -1,6 +1,7 @@
 package pet.eaters.ca.petbnb.pets.ui.details;
 
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
-import pet.eaters.ca.petbnb.pets.ui.QRScan.QRCodeGenAndReader;
+import pet.eaters.ca.petbnb.core.QRCodeGenAndReader;
 import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
@@ -40,7 +41,6 @@ public class PetDetailsFragment extends Fragment {
     private String petSize;
     private Integer petSizeData;
     private ImageView QRCodeImg;
-    QRCodeGenAndReader petQRCodeImg;
 
 
     public static PetDetailsFragment newInstance(String petId) {
@@ -115,8 +115,13 @@ public class PetDetailsFragment extends Fragment {
                 viewPager.setAdapter(viewPagerAdapter);
             }
         });
-        petQRCodeImg = new QRCodeGenAndReader(QRCodeImg, petId);
-        petQRCodeImg.generateQRCode();
+
+        //TDO make async and replace with size from view
+        Bitmap qrCode = new QRCodeGenAndReader().generateQRCode(petId, 320, 320);
+        if (qrCode != null) {
+            QRCodeImg.setImageBitmap(qrCode);
+        }
+
         return rootView;
     }
 }
