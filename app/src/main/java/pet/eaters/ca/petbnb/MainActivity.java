@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView textUserName;
     private CircleImageView avatar;
     private static final int RC_SIGN_IN = 9001;
+    private boolean isLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,11 +101,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void showUser(FirebaseUser user) {
         if (user == null) {
-            showLoginButtons(false);
+            isLogin = false;
+            showLoginButtons(isLogin);
             avatar.setImageResource(R.drawable.ic_user);
             textUserName.setText("");
         } else {
-            showLoginButtons(true);
+            isLogin = true;
+            showLoginButtons(isLogin);
             textUserName.setText(user.getDisplayName());
             showAvatar(user.getPhotoUrl());
         }
@@ -197,7 +200,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_create_post:
                 return PetFormFragment.newInstance();
             case R.id.nav_qrcode:
-                return QRScanFragment.newInstance();
+                if(isLogin == true) {
+                    return QRScanFragment.newInstance();
+                }
+                else {
+                    login();
+                }
         }
         return null;
     }

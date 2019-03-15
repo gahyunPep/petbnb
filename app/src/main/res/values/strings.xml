@@ -40,6 +40,9 @@
     <string name="str_ownerZipcodeError">Please enter your zip code</string>
     <string name="str_ownerEmailError">Please enter your valid email address</string>
     <string name="str_ownerPhoneError">Please enter your valid phone numbers with (+country code)</string>
+    <string name="scanCodeDescription">Scan a QR Code</string>
+    <string name="cancelScan">Cancel</string>
+    <string name="scan">Scan</string>
 
 
     <string-array name="petType_arr">
