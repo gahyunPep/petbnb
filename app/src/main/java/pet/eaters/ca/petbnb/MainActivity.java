@@ -27,6 +27,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
@@ -75,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+
+
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -84,7 +87,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (count == 0) {
                 super.onBackPressed();
             } else {
-                getSupportFragmentManager().popBackStack();
+                    getSupportFragmentManager().popBackStack();
+                    getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+                        @Override
+                        public void onBackStackChanged() {
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            int index = fragmentManager.getBackStackEntryCount() - 1;
+                            if(index >= 0) {
+                                String name = fragmentManager
+                                        .getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
+                                navigationView.setCheckedItem(Integer.parseInt(name));
+                            }
+                        }
+                    });
             }
         }
     }
@@ -186,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (fragment != null) {
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.content_frame, fragment)
-                            .addToBackStack(null)
+                            .addToBackStack(Integer.toString(menuItem.getItemId()))
                             .commit();
                 }
 
