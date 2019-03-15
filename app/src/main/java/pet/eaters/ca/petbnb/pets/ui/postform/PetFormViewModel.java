@@ -35,13 +35,13 @@ public class PetFormViewModel extends ViewModel {
      *
      * @return ageArrList
      */
-    public ArrayList<String> getAgeArrList() {
+    public ArrayList<String> getAgeArrList(String title, String moreThan) {
         ArrayList<String> ageArrList = new ArrayList<>(32);
-        ageArrList.add(String.valueOf(R.string.str_age));
+        ageArrList.add(title);
         for (int i = 1; i <= 30; i++) {
             ageArrList.add(String.valueOf(i));
         }
-        ageArrList.add(String.valueOf(R.string.str_over30));
+        ageArrList.add(moreThan);
         return ageArrList;
     }
 }
