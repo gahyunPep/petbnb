@@ -116,7 +116,8 @@ public class PetDetailsFragment extends Fragment {
             }
         });
 
-        Bitmap qrCode = new QRCodeGenAndReader().generateQRCode(petId);
+        //TDO make async and replace with size from view
+        Bitmap qrCode = new QRCodeGenAndReader().generateQRCode(petId, 320, 320);
         if (qrCode != null) {
             QRCodeImg.setImageBitmap(qrCode);
         }

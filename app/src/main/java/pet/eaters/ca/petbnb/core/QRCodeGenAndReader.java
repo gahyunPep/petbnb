@@ -11,10 +11,10 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 public class QRCodeGenAndReader {
 
-    public Bitmap generateQRCode(String textID) {
+    public Bitmap generateQRCode(String textID, int width, int height) {
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
-            BitMatrix bitMatrix = multiFormatWriter.encode(textID, BarcodeFormat.QR_CODE,200,200);
+            BitMatrix bitMatrix = multiFormatWriter.encode(textID, BarcodeFormat.QR_CODE, width, height);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             return barcodeEncoder.createBitmap(bitMatrix);
         } catch (WriterException ignored) {
