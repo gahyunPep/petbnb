@@ -8,24 +8,26 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import pet.eaters.ca.petbnb.core.Result;
+import pet.eaters.ca.petbnb.pets.data.Pet;
+import pet.eaters.ca.petbnb.pets.data.PetsRepository;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -43,7 +45,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             if (location != null) {
                 Log.d("Map", String.format("%f, %f", location.getLatitude(),
                         location.getLongitude()));
-                drawMarker(location);
+                zoomInCurrentLocation(location);
                 mLocationManager.removeUpdates(mLocationListener);
             } else {
                 Log.d("Map", "Location is null");
@@ -100,7 +102,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         if (currentLocation != null) {
-            drawMarker(currentLocation);
+            zoomInCurrentLocation(currentLocation);
         }
     }
 
@@ -163,14 +165,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void drawMarker(Location location) {
+    private void zoomInCurrentLocation(Location location) {
         if (mMap != null) {
             mMap.clear();
             LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.addMarker(new MarkerOptions()
-                    .position(gps)
-                    .title("Current Position"));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 12));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 14));
+            drawPetMarkers();
         }
+    }
+
+    private void drawPetMarkers() {
+        PetsRepository petsRepository = new PetsRepository();
+        petsRepository.getPets().observe(this, new Observer<Result<List<Pet>>>() {
+            @Override
+            public void onChanged(Result<List<Pet>> listResult) {
+                List<Pet> petList = listResult.getData();
+                if(petList != null){
+                    for (Pet pet : petList) {
+                        LatLng petLocation = new LatLng(pet.getLatitude(), pet.getLongitude());
+                        mMap.addMarker(new MarkerOptions()
+                                .position(petLocation)
+                                .title(getPetType(pet.getType())+": "+pet.getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name)));
+                    }
+                }
+            }
+        });
+    }
+
+    private String getPetType(String type) {
+        String petType = "Other Type Pet";
+        switch (type){
+            case "1":
+                petType = "Dog";
+                break;
+            case "2":
+                petType = "Cat";
+                break;
+            case "3":
+                break;
+        }
+        return petType;
     }
 }
