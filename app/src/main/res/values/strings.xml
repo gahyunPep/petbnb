@@ -28,6 +28,9 @@
     <string name="str_petSize">Pet Size</string>
     <string name="str_incompleteError">Hmmm, It seems like the form is not completed.</string>
     <string name="QRDescription">QR Image Code</string>
+    <string name="cancelScan">Cancelled</string>
+    <string name="scan">Scanned:</string>
+    <string name="scanCodeDescription">Scan a QR Code</string>
 
 
     <string-array name="petType_arr">
