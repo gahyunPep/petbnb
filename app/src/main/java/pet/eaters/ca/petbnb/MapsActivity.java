@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -171,6 +172,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .position(gps)
                     .title("Current Position"));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 12));
+            setMarketClickable(mMap);
         }
+    }
+
+    private void setMarketClickable(GoogleMap map) {
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                return false;
+            }
+        });
     }
 }
