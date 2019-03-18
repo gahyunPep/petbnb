@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,7 +36,6 @@ import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.pets.data.PhotoStorage;
 
 import static android.app.Activity.RESULT_OK;
-import static com.google.common.reflect.Reflection.initialize;
 
 public class PhotoUploadFragment extends Fragment {
 
@@ -45,14 +43,15 @@ public class PhotoUploadFragment extends Fragment {
     private Button addCameraBtn;
     private Button addGalleryBtn;
     private Button uploadBtn;
+    private RecyclerView photosRecyclerView;
     private final int REQUEST_IMAGE_CAPTURE = 1;
     private final int REQUEST_LOAD_GALLERY = 2;
     private final int REQUEST_ASK_PERMISSION = 3;
 
     List<Bitmap> imageList;
     List<String> imagePathList;
-    PhotoUploadAdapter photoUploadAdapter;
-    final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    PhotoUploadAdapter photoUploadAdapter = new PhotoUploadAdapter();
+    final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE};
 
     public static PhotoUploadFragment newInstance() {
         return new PhotoUploadFragment();
@@ -68,8 +67,8 @@ public class PhotoUploadFragment extends Fragment {
 
         checkPermissions();
 
-        RecyclerView photosView = view.findViewById(R.id.photosView);
-        photosView.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
+        photosRecyclerView = view.findViewById(R.id.photosView);
+        photosRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
 
         addCameraBtn = view.findViewById(R.id.btn_camera);
         addCameraBtn.setOnClickListener(new View.OnClickListener() {
@@ -93,12 +92,11 @@ public class PhotoUploadFragment extends Fragment {
             public void onClick(View v) {
                 uploadToFireStore();
                 Toast.makeText(getContext(), "Upload Successful", Toast.LENGTH_SHORT).show();
-                exitFragment();
             }
         });
 
-        photoUploadAdapter = new PhotoUploadAdapter(imageList);
-        photosView.setAdapter(photoUploadAdapter);
+        photoUploadAdapter.updateList(imageList);
+        photosRecyclerView.setAdapter(photoUploadAdapter);
         return view;
     }
 
@@ -128,44 +126,60 @@ public class PhotoUploadFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_IMAGE_CAPTURE:
-                if (resultCode == RESULT_OK) {
-                    Bundle extras = data.getExtras();
-                    Bitmap bitmapFromCamera = (Bitmap) extras.get("data");
-                    File imageFile = null;
-                    try {
-                        imageFile = createImageFile();
-                        FileOutputStream iOut = new FileOutputStream(imageFile);
-                        bitmapFromCamera.compress(Bitmap.CompressFormat.JPEG, 100, iOut);
-                        iOut.flush();
-                        iOut.close();
-                    } catch (IOException ex) {
-                        Log.e("IMAGE FILE", ex.toString());
-                    }
-                    imagePathList.add(imageFile.getAbsolutePath());
-                    Log.v("CAMERA PATH", imageFile.getAbsolutePath());
-                    addToBitmapList(bitmapFromCamera);
-                }
-                break;
-            case REQUEST_LOAD_GALLERY:
-                if (resultCode == RESULT_OK) {
-                    Uri imageUri = data.getData();
-                    Bitmap bitmapFromGallery = null;
-                    try {
-                        bitmapFromGallery = MediaStore.Images.Media.getBitmap(this.getActivity().getContentResolver(), imageUri);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Log.v("GALLERY PATH", getPathFromUri(imageUri));
-                    imagePathList.add(getPathFromUri(imageUri));
-                    addToBitmapList(bitmapFromGallery);
-                }
-                break;
-
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_IMAGE_CAPTURE:
+                    imageCapture(data);
+                    break;
+                case REQUEST_LOAD_GALLERY:
+                    loadGallery(data);
+                    break;
+            }
         }
-        photoUploadAdapter.updateArray(imageList);
-        photoUploadAdapter.notifyDataSetChanged();
+    }
+
+    private void loadGallery(Intent data) {
+        Uri imageUri = data.getData();
+        Bitmap bitmapFromGallery = null;
+        try {
+            bitmapFromGallery = MediaStore.Images.Media.getBitmap(this.getActivity().getContentResolver(), imageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.v("GALLERY PATH", getPathFromUri(imageUri));
+        imagePathList.add(getPathFromUri(imageUri));
+        addToBitmapList(bitmapFromGallery);
+        photoUploadAdapter.updateList(imageList);
+    }
+
+    private void imageCapture(final Intent data) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bundle extras = data.getExtras();
+                Bitmap bitmapFromCamera = (Bitmap) extras.get("data");
+                File imageFile = null;
+                try {
+                    imageFile = createImageFile();
+                    FileOutputStream iOut = new FileOutputStream(imageFile);
+                    bitmapFromCamera.compress(Bitmap.CompressFormat.JPEG, 100, iOut);
+                    iOut.flush();
+                    iOut.close();
+                } catch (IOException ex) {
+                    Log.e("IMAGE FILE", ex.toString());
+                }
+                imagePathList.add(imageFile.getAbsolutePath());
+                final Bitmap bitmap = bitmapFromCamera;
+                photosRecyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        addToBitmapList(bitmap);
+                        photoUploadAdapter.updateList(imageList);
+                    }
+                });
+
+            }
+        }).start();
     }
 
     public void addToBitmapList(Bitmap bitmap) {
@@ -193,7 +207,7 @@ public class PhotoUploadFragment extends Fragment {
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = this.getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = this.getContext().getFilesDir();
 
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -201,10 +215,6 @@ public class PhotoUploadFragment extends Fragment {
                 storageDir      /* directory */
         );
         return image;
-    }
-
-    private void exitFragment() {
-        getFragmentManager().popBackStack();
     }
 
     // Source: https://developer.here.com/documentation/android-premium/dev_guide/topics/request-android-permissions.html
@@ -237,13 +247,11 @@ public class PhotoUploadFragment extends Fragment {
                         // exit fragment if permission not granted
                         Toast.makeText(getContext(), "Required permission '" + permissions[index]
                                 + "' not granted, exiting", Toast.LENGTH_LONG).show();
-                        exitFragment();
                         return;
                     }
                 }
                 // all permissions granted
-                initialize();
-                break;
+                return;
         }
     }
 }
