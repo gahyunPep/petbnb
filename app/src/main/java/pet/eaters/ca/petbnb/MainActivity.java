@@ -179,9 +179,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_login:
                 login();
                 break;
-            case R.id.nav_create_post:
-                goToPostCreationForm();
-                break;
             default:
                 Fragment fragment = createFragmentForMenu(menuItem.getItemId());
                 if (fragment != null) {
@@ -193,11 +190,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
         return true;
-    }
-
-    private void goToPostCreationForm() {
-        Intent intent = new Intent(this, PetPostFormActivity.class);
-        startActivity(intent);
     }
 
     private Fragment createFragmentForMenu(int id) {
