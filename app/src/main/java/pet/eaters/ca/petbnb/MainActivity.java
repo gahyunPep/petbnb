@@ -11,7 +11,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -30,8 +29,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
-import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
+import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
