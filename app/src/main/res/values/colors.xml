@@ -7,4 +7,6 @@
     <color name="whiteTrans">#d8fffefe</color>
     <color name="selectedTrans">#d2d9d7d7</color>
     <color name="light_gray">#c7c7c7</color>
+    <color name="female_color">#8DF05228</color>
+    <color name="male_color">#8B50C8EF</color>
 </resources>

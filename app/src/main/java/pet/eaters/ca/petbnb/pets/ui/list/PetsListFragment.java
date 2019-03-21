@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class PetsListFragment extends Fragment implements PetsListAdapter.OnPetC
 
     private PetsListViewModel mViewModel;
     private RecyclerView petsRecyclerView;
+    private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
     PetsListAdapter adapter;
     LiveData<Result<List<Pet>>> pets;
@@ -39,6 +41,7 @@ public class PetsListFragment extends Fragment implements PetsListAdapter.OnPetC
         View view = inflater.inflate(R.layout.pets_list_fragment, container, false);
         petsRecyclerView = view.findViewById(R.id.petsRecyclerView);
         swipeRefreshLayout = view.findViewById(R.id.swipeContainer);
+        progressBar = view.findViewById(R.id.pets_list_progress_bar);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -56,6 +59,7 @@ public class PetsListFragment extends Fragment implements PetsListAdapter.OnPetC
         adapter = new PetsListAdapter();
         adapter.setPetClickListener(this);
         petsRecyclerView.setAdapter(adapter);
+        progressBar.setVisibility(View.VISIBLE);
         getAllPets();
     }
 
@@ -77,6 +81,7 @@ public class PetsListFragment extends Fragment implements PetsListAdapter.OnPetC
                 if (data != null) {
                     adapter.submitList(data);
                     swipeRefreshLayout.setRefreshing(false);
+                    progressBar.setVisibility(View.GONE);
                 } else {
                     //TODO error handling
                 }

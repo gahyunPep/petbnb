@@ -1,5 +1,6 @@
 package pet.eaters.ca.petbnb.pets.ui.list;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,8 +92,10 @@ public class PetsListAdapter extends ListAdapter<Pet, PetsListAdapter.PetViewHol
             petListItemAge.setText(item.getAge() + " years old");
             int petGender = item.getGender();
             if (petGender == 0) {
+                petListItemGender.setChipBackgroundColorResource(R.color.female_color);
                 petListItemGender.setText("Female");
             } else if (petGender == 1) {
+                petListItemGender.setChipBackgroundColorResource(R.color.male_color);
                 petListItemGender.setText("Male");
             }
             int petSize = item.getSize();
