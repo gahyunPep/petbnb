@@ -18,6 +18,11 @@
     <string name="genderImageDescription">Gender</string>
     <string name="ImageDes">Avatar</string>
 
+    <string name="QRDescription">QR Image Code</string>
+    <string name="cancelScan">Cancelled</string>
+    <string name="scan">Scanned:</string>
+    <string name="scanCodeDescription">Scan a QR Code</string>
+
     <string name="str_name">Name</string>
     <string name="str_age">Age</string>
     <string name="str_sex">sex</string>
@@ -31,6 +36,8 @@
     <string name="str_petType">Pet Type</string>
     <string name="str_petSize">Pet Size</string>
     <string name="str_incompleteError">Hmmm, It seems like the form is not completed.</string>
+    <string name="upload_pet_photos_text">Upload Pet Photos</string>
+    <string name="upload_btn_text">Upload</string>
     <string name="str_phone">(+Country Code) Phone</string>
     <string name="str_address">Address</string>
     <string name="str_email">Email</string>
@@ -58,7 +65,7 @@
         <item>small</item>
     </string-array>
 
-    <string-array name= "province_arr">
+    <string-array name="province_arr">
         <item>Province</item>
         <item>AB</item>
         <item>BC</item>

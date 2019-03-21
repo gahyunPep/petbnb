@@ -1,21 +1,20 @@
 package pet.eaters.ca.petbnb.pets.ui.details;
 
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.android.material.tabs.TabLayout;
-
 import java.util.List;
-
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
+import pet.eaters.ca.petbnb.core.QRCodeGenAndReader;
 import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
@@ -41,6 +40,7 @@ public class PetDetailsFragment extends Fragment {
     private Integer genderData;
     private String petSize;
     private Integer petSizeData;
+    private ImageView QRCodeImg;
 
 
     public static PetDetailsFragment newInstance(String petId) {
@@ -71,6 +71,7 @@ public class PetDetailsFragment extends Fragment {
         petPhone = rootView.findViewById(R.id.pet_phone);
         petCity = rootView.findViewById(R.id.pet_city);
         petGender = rootView.findViewById(R.id.pet_gender);
+        QRCodeImg = rootView.findViewById(R.id.QRImageView);
 
         imageSlideIndicator = rootView.findViewById(R.id.image_slide_indicator);
         imageSlideIndicator.setupWithViewPager(viewPager, true);
@@ -114,7 +115,13 @@ public class PetDetailsFragment extends Fragment {
                 viewPager.setAdapter(viewPagerAdapter);
             }
         });
-       return rootView;
-    }
 
+        //TDO make async and replace with size from view
+        Bitmap qrCode = new QRCodeGenAndReader().generateQRCode(petId, 320, 320);
+        if (qrCode != null) {
+            QRCodeImg.setImageBitmap(qrCode);
+        }
+
+        return rootView;
+    }
 }

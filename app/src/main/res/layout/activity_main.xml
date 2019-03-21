@@ -23,67 +23,11 @@
             android:id="@+id/toolbar"/></com.google.android.material.appbar.AppBarLayout>
 
         <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <FrameLayout
             android:id="@+id/content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <FrameLayout
-                android:id="@+id/photo_upload_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:layout="@layout/photo_upload_fragment"></FrameLayout>
-
-            <Button
-                android:id="@+id/mapBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="MapActivity"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.517"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <Button
-                android:id="@+id/petDetailBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:text="Pet Details"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/postFormBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Post Form"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.516"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/petDetailBtn" />
-
-            <Button
-                android:id="@+id/photoUploadBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="Photo Upload"
-                app:layout_constraintBottom_toTopOf="@+id/mapBtn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        </FrameLayout>
     </LinearLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
