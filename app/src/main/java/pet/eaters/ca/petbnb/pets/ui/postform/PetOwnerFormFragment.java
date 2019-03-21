@@ -90,6 +90,7 @@ public class PetOwnerFormFragment extends Fragment {
         zipcodeEditText.addTextChangedListener(new NonEmptyTextWatcher(zipcodeInputLayout, getString(R.string.str_ownerZipcodeError)));
         emailEditText.addTextChangedListener(new NonEmptyTextWatcher(emailInputLayout, getString(R.string.str_ownerEmailError)));
         phoneEditText.addTextChangedListener(new NonEmptyTextWatcher(phoneInputLayout, getString(R.string.str_ownerPhoneError)));
+
         phoneEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -104,7 +105,7 @@ public class PetOwnerFormFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if(!s.toString().startsWith("+1")){
-                    s.append("+1", 0, 2);
+                    s.insert(0, "+1");
                 }
             }
         });
