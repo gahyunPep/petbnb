@@ -14,6 +14,11 @@
             android:icon="@drawable/ic_create_nav"
             android:title="@string/create_post" />
         <item
+            android:id="@+id/nav_qrcode"
+            android:icon="@drawable/qrcodeicon"
+            android:title="Scan QR Code"
+            />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout_nav"
             android:title="@string/log_out" />

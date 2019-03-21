@@ -74,7 +74,7 @@ public class PetFormFragment extends Fragment {
         maleBtn = view.findViewById(R.id.maleRadioBtn);
 
         petTypeSpinner = initSpinner((Spinner) view.findViewById(R.id.petTypeSpinner), getListFromResources(R.array.petType_arr));
-        petAgeSpinner = initSpinner((Spinner) view.findViewById(R.id.petAgeSpinner), mViewModel.getAgeArrList());
+        petAgeSpinner = initSpinner((Spinner) view.findViewById(R.id.petAgeSpinner), mViewModel.getAgeArrList(getString(R.string.str_age), getString(R.string.str_over30)));
         petSizeSpinner = initSpinner((Spinner) view.findViewById(R.id.petSizeSpinner), getListFromResources(R.array.petSize_arr));
 
         //input validation while it's writing
@@ -89,8 +89,8 @@ public class PetFormFragment extends Fragment {
         });
     }
 
-    private ArrayList<String> getListFromResources(int petType_arr) {
-        return new ArrayList<>(Arrays.asList(getResources().getStringArray(petType_arr)));
+    private ArrayList<String> getListFromResources(int arr) {
+        return new ArrayList<>(Arrays.asList(getResources().getStringArray(arr)));
     }
 
     private Spinner initSpinner(Spinner spinner, List<String> list) {
@@ -108,8 +108,8 @@ public class PetFormFragment extends Fragment {
         String petName, petDesc;
         int petType, petAge, petSize, petSex;
 
-        petName = nameEditTxt.getText().toString();
-        petDesc = descEditTxt.getText().toString();
+        petName = nameEditTxt.getText().toString().trim();
+        petDesc = descEditTxt.getText().toString().trim();
         petType = petTypeSpinner.getSelectedItemPosition();
         petAge = petAgeSpinner.getSelectedItemPosition();
         petSize = petSizeSpinner.getSelectedItemPosition();
@@ -146,10 +146,10 @@ public class PetFormFragment extends Fragment {
             Integer value = entry.getValue();
             switch (key) {
                 case PET_NAME:
-                    descInputLayout.setError(getString(value));
+                    nameInputLayout.setError(getString(value));
                     break;
                 case PET_DESC:
-                    nameInputLayout.setError(getString(value));
+                    descInputLayout.setError(getString(value));
                     break;
                 case PET_ELSE:
                     Snackbar.make(getView(), value, Snackbar.LENGTH_LONG).show();
