@@ -64,9 +64,10 @@ public class PetOwnerFormFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments()!=null){
-            petForm = getArguments().getParcelable(PET_FORM_KEY);
+        if (getArguments() == null) {
+            throw new IllegalArgumentException();
         }
+        petForm = getArguments().getParcelable(PET_FORM_KEY);
     }
 
     @Override
@@ -155,7 +156,7 @@ public class PetOwnerFormFragment extends Fragment {
         email = emailEditText.getText().toString().trim();
         phone = phoneEditText.getText().toString().trim();;
         province = provinceSpinner.getSelectedItemPosition();
-        
+
         validateData(name, address, city, zipcode, email, phone,province);
     }
 
