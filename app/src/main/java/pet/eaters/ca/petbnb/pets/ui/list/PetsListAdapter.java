@@ -87,11 +87,26 @@ public class PetsListAdapter extends ListAdapter<Pet, PetsListAdapter.PetViewHol
                         .load(imageUrlList.get(0))
                         .into(petListItemImage);
             }
-//            petListItemType.setText(item.getType());
-////          petListItemAge.setText(item.getAge()+" years old");
-//            petListItemGender.setText(item.getGender());
-//            petListItemSize.setText(item.getSize());
-
+            petListItemType.setText(item.getType());
+            petListItemAge.setText(item.getAge() + " years old");
+            int petGender = item.getGender();
+            if (petGender == 0) {
+                petListItemGender.setText("Female");
+            } else if (petGender == 1) {
+                petListItemGender.setText("Male");
+            }
+            int petSize = item.getSize();
+            switch (petSize) {
+                case 1:
+                    petListItemSize.setText("Big");
+                    break;
+                case 2:
+                    petListItemSize.setText("Medium");
+                    break;
+                case 3:
+                    petListItemSize.setText("Small");
+                    break;
+            }
         }
     }
 
