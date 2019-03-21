@@ -40,12 +40,15 @@
     <string name="str_ownerZipcodeError">Please enter your zip code</string>
     <string name="str_ownerEmailError">Please enter your valid email address</string>
     <string name="str_ownerPhoneError">Please enter your valid phone numbers with (+country code)</string>
+    <string name="str_otherTypePet">Other Type Pet</string>
+    <string name="dog">Dog</string>
+    <string name="cat">Cat</string>
 
 
     <string-array name="petType_arr">
         <item>Pet Type</item>
-        <item>Dogs</item>
-        <item>Cats</item>
+        <item>@string/dog</item>
+        <item>@string/cat</item>
         <item>Others</item>
     </string-array>
 

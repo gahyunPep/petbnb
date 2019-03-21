@@ -194,13 +194,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private String getPetType(String type) {
-        String petType = "Other Type Pet";
+        String petType = getString(R.string.str_otherTypePet);
         switch (type){
             case "1":
-                petType = "Dog";
+                petType = getString(R.string.dog);
                 break;
             case "2":
-                petType = "Cat";
+                petType = getString(R.string.cat);
                 break;
             case "3":
                 break;
