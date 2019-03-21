@@ -5,15 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -32,8 +29,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
-import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
+import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -42,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView textUserName;
     private CircleImageView avatar;
     private static final int RC_SIGN_IN = 9001;
-    private Button petFormBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
