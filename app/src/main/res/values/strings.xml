@@ -54,6 +54,10 @@
     <string name="cat">Cat</string>
     <string name="default_prefix">+1</string>
 
+    <string name="female">Female</string>
+    <string name="male">Male</string>
+    <string name="yeas_old_fmt">%d years old</string>
+
 
     <string-array name="petType_arr">
         <item>Pet Type</item>
@@ -66,7 +70,7 @@
         <item>Pet Size</item>
         <item>Big</item>
         <item>Medium</item>
-        <item>small</item>
+        <item>Small</item>
     </string-array>
 
     <string-array name="province_arr">
