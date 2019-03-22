@@ -1,6 +1,5 @@
 package pet.eaters.ca.petbnb.pets.ui.list;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +8,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,12 +58,12 @@ public class PetsListAdapter extends ListAdapter<Pet, PetsListAdapter.PetViewHol
     }
 
     static class PetViewHolder extends RecyclerView.ViewHolder {
-        public TextView petListItemName;
-        public ImageView petListItemImage;
-        public Chip petListItemType;
-        public Chip petListItemAge;
-        public Chip petListItemGender;
-        public Chip petListItemSize;
+        TextView petListItemName;
+        ImageView petListItemImage;
+        Chip petListItemType;
+        Chip petListItemAge;
+        Chip petListItemGender;
+        Chip petListItemSize;
 
         public PetViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -80,35 +77,51 @@ public class PetsListAdapter extends ListAdapter<Pet, PetsListAdapter.PetViewHol
 
         public void bind(Pet item, View.OnClickListener clickListener) {
             itemView.setOnClickListener(clickListener);
-            //TODO fill with real data
             petListItemName.setText(item.getName());
-            List<String> imageUrlList = item.getImages();
-            if (imageUrlList.size() > 0) {
-                Glide.with(itemView.getContext())
-                        .load(imageUrlList.get(0))
-                        .into(petListItemImage);
-            }
             petListItemType.setText(item.getType());
-            petListItemAge.setText(item.getAge() + " years old");
-            int petGender = item.getGender();
-            if (petGender == 0) {
-                petListItemGender.setChipBackgroundColorResource(R.color.female_color);
-                petListItemGender.setText("Female");
-            } else if (petGender == 1) {
-                petListItemGender.setChipBackgroundColorResource(R.color.male_color);
-                petListItemGender.setText("Male");
+            petListItemAge.setText(petListItemAge.getContext().getString(R.string.yeas_old_fmt, item.getAge()));
+            bindImage(item);
+            bindGender(item);
+            bindSize(item);
+        }
+
+        private void bindImage(Pet item) {
+            if (item.getImages().size() <= 0) {
+                return;
             }
-            int petSize = item.getSize();
-            switch (petSize) {
+
+            Glide.with(petListItemImage.getContext())
+                    .load(item.getImages().get(0))
+                    .into(petListItemImage);
+        }
+
+        private void bindSize(Pet item) {
+            String[] petSizeArray = itemView.getContext().getResources().getStringArray(R.array.petSize_arr);
+            petListItemSize.setText(petSizeArray[item.getSize()]);
+        }
+
+        private void bindGender(Pet item) {
+            petListItemGender.setVisibility(View.VISIBLE);
+            int color = 0;
+            int gender = 0;
+
+            switch (item.getGender()) {
+                case 0:
+                    gender = R.string.female;
+                    color = R.color.female_color;
+                    break;
                 case 1:
-                    petListItemSize.setText("Big");
+                    gender = R.string.male;
+                    color = R.color.male_color;
                     break;
-                case 2:
-                    petListItemSize.setText("Medium");
-                    break;
-                case 3:
-                    petListItemSize.setText("Small");
-                    break;
+            }
+
+            if (color != 0 && gender != 0) {
+                petListItemGender.setVisibility(View.VISIBLE);
+                petListItemGender.setChipBackgroundColorResource(color);
+                petListItemGender.setText(gender);
+            } else {
+                petListItemGender.setVisibility(View.GONE);
             }
         }
     }
