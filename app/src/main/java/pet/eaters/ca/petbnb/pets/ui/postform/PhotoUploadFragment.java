@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,7 +68,6 @@ public class PhotoUploadFragment extends Fragment {
 
     private static final String PET_FORM_KEY = "petForm";
     private static final String PET_OWENER_FORM_KEY = "petOwnerForm";
-
 
 
     public static PhotoUploadFragment newInstance(PetForm petForm, PetOwnerForm petOwnerForm) {
@@ -249,9 +249,10 @@ public class PhotoUploadFragment extends Fragment {
         String ownerEmail = petOwnerForm.ownerEmail;
         String ownerPhone = petOwnerForm.ownerPhone;
         List<String> petImages = images;
-        Address geoAddress = getGeoAddress(ownerAddress + ", " + ownerCity);
-        double latitude = geoAddress.getLatitude();
-        double longitude = geoAddress.getLongitude();
+
+        Pair<Double, Double> geoAddress = getGeoAddress(ownerAddress + ", " + ownerCity);
+        double latitude = geoAddress.first;
+        double longitude = geoAddress.second;
         String ownerId = ""; //TODO temp ownerID
 
         PetData petData = new PetData(petName, petDesc, "1", petSize, petImages, ownerPhone,
@@ -264,24 +265,24 @@ public class PhotoUploadFragment extends Fragment {
         petsRepository.post(petData).observe(getViewLifecycleOwner(), new Observer<Result<Void>>() {
             @Override
             public void onChanged(Result<Void> voidResult) {
-                if(voidResult.getException() == null){
+                if (voidResult.getException() == null) {
                     getActivity().finish();
                 }
             }
         });
     }
 
-    private Address getGeoAddress(String ownerAddress) {
-        Geocoder coder = new Geocoder(getContext());
-        List<Address> address;
-        Address geoAddress = null;
+    private Pair<Double, Double> getGeoAddress(String ownerAddress) {
         try {
-            address = coder.getFromLocationName(ownerAddress, 1);
-            geoAddress = address.get(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return geoAddress;
+            Geocoder coder = new Geocoder(getContext());
+            List<Address> addresses = coder.getFromLocationName(ownerAddress, 1);
+            if (!addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                return new Pair<>(address.getLatitude(), address.getLongitude());
+            }
+        } catch (IOException ignored) { }
+
+        return new Pair<>(49.203664, -122.912863);
     }
 
     // Source: https://developer.here.com/documentation/android-premium/dev_guide/topics/request-android-permissions.html
