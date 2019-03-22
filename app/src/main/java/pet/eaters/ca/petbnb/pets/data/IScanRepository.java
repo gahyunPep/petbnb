@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData;
 import pet.eaters.ca.petbnb.core.Result;
 
 public interface IScanRepository {
-    LiveData<Result<Void>> post(String scanId, ScanData scanData);
+    LiveData<Result<Void>> post(ScanRecord scanData);
 
-    LiveData<Result<Void>> update(String scanId, ScanData scanData);
+    LiveData<Result<Void>> update(String scanId, ScanRecord scanData);
 
     LiveData<Result<Void>> delete(String scanId);
 

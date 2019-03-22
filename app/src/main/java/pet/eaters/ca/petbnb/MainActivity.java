@@ -20,10 +20,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -183,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(petId == null) {
                 Toast.makeText(MainActivity.this, getString(R.string.cancelScan),
                         Toast.LENGTH_LONG).show();
+
             } else {
                 Toast.makeText(MainActivity.this, getString(R.string.scan) +
                         petId, Toast.LENGTH_LONG).show();
@@ -235,7 +239,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void startScanner() {
-        /*
         IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
         integrator.setPrompt(getString(R.string.scanCodeDescription));
@@ -243,53 +246,48 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         integrator.setBeepEnabled(true);
         integrator.setBarcodeImageEnabled(true);
         integrator.initiateScan();
-        */
-        updateScanToDB("R2EyV7mNkwy9cwLyayg0");
-
     }
 
     private void updateScanToDB(final String petId) {
-        //final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = "0Ad3PggAlzXIwimhRlpRa5ToNUg2";  //user.getUid();
-        String scanId = uid + "+" + petId;
-//R2EyV7mNkwy9cwLyayg0
-// 0Ad3PggAlzXIwimhRlpRa5ToNUg2
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final String uid = user.getUid();
+        final String scanId = uid + "+" + petId;
+
         scanRepository = new ScanRepository();
+
         scanRepository.get(scanId).observe(this, new Observer<Result<ScanRecord>>() {
             @Override
             public void onChanged(Result<ScanRecord> scanRecordResult) {
-                String s ="";
-            }
-        });
-
-        //scanRepository.post(scanId, new ScanData(uid, petId, getCurrentTime()));
-
-
-
-        /*
-        LiveData<Result<ScanRecord>> result = scanRepository.get(petId);
-        result.observe(this, new Observer<Result<ScanRecord>>() {
-            @Override
-            public void onChanged(Result<ScanRecord> listResult) {
-                ScanRecord record = listResult.getData();
-
-
-                for(ScanRecord eachScanRecord : scanRecord) {
-                    if(eachScanRecord.getUserID().equals(user.getUid()) && eachScanRecord.getPetID().equals(petId)) {
-                            ScanData scanData = new ScanData(user.getUid(), eachScanRecord.getPetID(), eachScanRecord.getTimeCheckIn(),
-                                    getCurrentTime(), calculatePayment(eachScanRecord.getTimeCheckIn(), getCurrentTime()));
-                            scanRepository.update(eachScanRecord.getId(), scanData);
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
-                        alertDialogBuilder.setMessage(Integer.toString(scanData.getPrice()));
+                ScanRecord scanRecord = scanRecordResult.getData();
+                if (scanRecord != null) {
+                    if(scanRecord.getTimestamps().size() % 2 == 0) {
+                        scanRepository.update(scanId, new ScanRecord(scanRecord.getPetID(),
+                                scanRecord.getUserID(), scanRecord.addTimestamps(getCurrentTime())));
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
+                        alertDialogBuilder.setMessage("Start time is set!");
+                        alertDialogBuilder.show();
                     }
                     else {
-                        ScanData scanData = new ScanData(user.getUid(), petId, getCurrentTime());
-                        scanRepository.post(scanData);
+                        scanRepository.update(scanId, new ScanRecord(scanRecord.getPetID(),
+                                scanRecord.getUserID(), scanRecord.addTimestamps(getCurrentTime())));
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
+                        int price = calculatePayment(scanRecord.getTimestamps().get(scanRecord.getTimestamps().size() - 1),
+                                scanRecord.getTimestamps().get(scanRecord.getTimestamps().size() - 2));
+                        alertDialogBuilder.setMessage("You will have to pay: $" + Integer.toString(price));
+                        alertDialogBuilder.show();
                     }
+                }
+                else {
+                    List<Long> timestamps = new ArrayList<>();
+                    timestamps.add(getCurrentTime());
+                    scanRepository.update(scanId, new ScanRecord(petId,
+                            uid, timestamps));
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
+                    alertDialogBuilder.setMessage("Start time is set!");
+                    alertDialogBuilder.show();
                 }
             }
         });
-        */
 
     }
 
@@ -298,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public int calculatePayment(long timeCheckOut, long timeCheckIn) {
-        long hour = timeCheckOut - timeCheckIn;
+        long hour = (timeCheckOut - timeCheckIn) / (60 * 60 * 1000);
         return (int)hour * 2;
     }
 

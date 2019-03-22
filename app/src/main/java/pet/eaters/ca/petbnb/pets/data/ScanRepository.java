@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -19,13 +20,14 @@ public class ScanRepository implements IScanRepository {
     private CollectionReference scan = db.collection(SCAN_COLLECTION);
 
     @Override
-    public LiveData<Result<Void>> post(String scanId, ScanData scanData) {
-        return executeTask(scan.document(scanId).set(scanData));
+    public LiveData<Result<Void>> post(ScanRecord scanRecord) {
+        final DocumentReference createdScan = scan.document();
+        return executeTask(createdScan.set(scanRecord));
     }
 
     @Override
-    public LiveData<Result<Void>> update(String scanId, ScanData scanData) {
-        return executeTask(scan.document(scanId).set(scanData));
+    public LiveData<Result<Void>> update(String scanId, ScanRecord scanRecord) {
+        return executeTask(scan.document(scanId).set(scanRecord));
     }
 
     @Override
@@ -52,7 +54,7 @@ public class ScanRepository implements IScanRepository {
     }
 
     private ScanRecord scanRecordFromDocument(DocumentSnapshot document) {
-        return new ScanRecord(document.getId(), document.toObject(ScanData.class));
+        return document.toObject(ScanRecord.class);
     }
 
     private <T> Mapper<T, T> transparentMapper() {
