@@ -17,6 +17,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.Arrays;
 
@@ -27,8 +29,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import de.hdodenhof.circleimageview.CircleImageView;
-import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
+import pet.eaters.ca.petbnb.core.Result;
+import pet.eaters.ca.petbnb.pets.data.ScanData;
+import pet.eaters.ca.petbnb.pets.data.ScanRecord;
+import pet.eaters.ca.petbnb.pets.data.ScanRepository;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
 
@@ -39,11 +46,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private CircleImageView avatar;
     private static final int RC_SIGN_IN = 9001;
     private boolean isLogin = false;
+    private ScanRepository scanRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //https://codinginflow.com/tutorials/android/navigation-drawer/part-2-layouts
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -152,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        //super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
@@ -166,6 +175,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else {
                 Toast.makeText(this, "Failed to log in with your account", Toast.LENGTH_SHORT).show();
             }
+        }
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            String petId = result.getContents();
+            if(petId == null) {
+                Toast.makeText(MainActivity.this, getString(R.string.cancelScan),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(MainActivity.this, getString(R.string.scan) +
+                        petId, Toast.LENGTH_LONG).show();
+                updateScanToDB(petId);
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -201,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return PetFormFragment.newInstance();
             case R.id.nav_qrcode:
                 if(isLogin == true) {
-                    return QRScanFragment.newInstance();
+                    startScanner();
                 }
                 else {
                     login();
@@ -209,4 +233,73 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return null;
     }
+
+    private void startScanner() {
+        /*
+        IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+        integrator.setPrompt(getString(R.string.scanCodeDescription));
+        integrator.setCameraId(0);
+        integrator.setBeepEnabled(true);
+        integrator.setBarcodeImageEnabled(true);
+        integrator.initiateScan();
+        */
+        updateScanToDB("R2EyV7mNkwy9cwLyayg0");
+
+    }
+
+    private void updateScanToDB(final String petId) {
+        //final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = "0Ad3PggAlzXIwimhRlpRa5ToNUg2";  //user.getUid();
+        String scanId = uid + "+" + petId;
+//R2EyV7mNkwy9cwLyayg0
+// 0Ad3PggAlzXIwimhRlpRa5ToNUg2
+        scanRepository = new ScanRepository();
+        scanRepository.get(scanId).observe(this, new Observer<Result<ScanRecord>>() {
+            @Override
+            public void onChanged(Result<ScanRecord> scanRecordResult) {
+                String s ="";
+            }
+        });
+
+        //scanRepository.post(scanId, new ScanData(uid, petId, getCurrentTime()));
+
+
+
+        /*
+        LiveData<Result<ScanRecord>> result = scanRepository.get(petId);
+        result.observe(this, new Observer<Result<ScanRecord>>() {
+            @Override
+            public void onChanged(Result<ScanRecord> listResult) {
+                ScanRecord record = listResult.getData();
+
+
+                for(ScanRecord eachScanRecord : scanRecord) {
+                    if(eachScanRecord.getUserID().equals(user.getUid()) && eachScanRecord.getPetID().equals(petId)) {
+                            ScanData scanData = new ScanData(user.getUid(), eachScanRecord.getPetID(), eachScanRecord.getTimeCheckIn(),
+                                    getCurrentTime(), calculatePayment(eachScanRecord.getTimeCheckIn(), getCurrentTime()));
+                            scanRepository.update(eachScanRecord.getId(), scanData);
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+                        alertDialogBuilder.setMessage(Integer.toString(scanData.getPrice()));
+                    }
+                    else {
+                        ScanData scanData = new ScanData(user.getUid(), petId, getCurrentTime());
+                        scanRepository.post(scanData);
+                    }
+                }
+            }
+        });
+        */
+
+    }
+
+    public long getCurrentTime() {
+        return System.currentTimeMillis();
+    }
+
+    public int calculatePayment(long timeCheckOut, long timeCheckIn) {
+        long hour = timeCheckOut - timeCheckIn;
+        return (int)hour * 2;
+    }
+
 }
