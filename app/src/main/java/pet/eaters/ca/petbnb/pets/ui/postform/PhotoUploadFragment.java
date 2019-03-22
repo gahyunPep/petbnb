@@ -52,7 +52,7 @@ public class PhotoUploadFragment extends Fragment {
     private List<String> imagePathList;
     private PhotoUploadAdapter photoUploadAdapter = new PhotoUploadAdapter();
 
-    private final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE};
+    private final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
 
     public static PhotoUploadFragment newInstance() {
         return new PhotoUploadFragment();
