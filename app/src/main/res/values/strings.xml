@@ -11,6 +11,10 @@
     <string name="log_out">Log Out</string>
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
+
+    <string name="photo_camera">Camera</string>
+    <string name="photo_gallery">Gallery</string>
+
     <string name="genderImageDescription">Gender</string>
     <string name="ImageDes">Avatar</string>
 
@@ -32,6 +36,8 @@
     <string name="str_petType">Pet Type</string>
     <string name="str_petSize">Pet Size</string>
     <string name="str_incompleteError">Hmmm, It seems like the form is not completed.</string>
+    <string name="upload_pet_photos_text">Upload Pet Photos</string>
+    <string name="upload_btn_text">Upload</string>
     <string name="str_phone">(+Country Code) Phone</string>
     <string name="str_address">Address</string>
     <string name="str_email">Email</string>
@@ -43,12 +49,16 @@
     <string name="str_ownerZipcodeError">Please enter your zip code</string>
     <string name="str_ownerEmailError">Please enter your valid email address</string>
     <string name="str_ownerPhoneError">Please enter your valid phone numbers with (+country code)</string>
+    <string name="str_otherTypePet">Other Type Pet</string>
+    <string name="dog">Dog</string>
+    <string name="cat">Cat</string>
+    <string name="default_prefix">+1</string>
 
 
     <string-array name="petType_arr">
         <item>Pet Type</item>
-        <item>Dogs</item>
-        <item>Cats</item>
+        <item>@string/dog</item>
+        <item>@string/cat</item>
         <item>Others</item>
     </string-array>
 

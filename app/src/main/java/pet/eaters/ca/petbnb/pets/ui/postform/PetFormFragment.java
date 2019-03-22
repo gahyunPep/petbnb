@@ -47,6 +47,8 @@ public class PetFormFragment extends Fragment {
     private Spinner petAgeSpinner;
     private Spinner petSizeSpinner;
 
+    private Button nextButton;
+
     public static PetFormFragment newInstance() {
         return new PetFormFragment();
     }
@@ -65,13 +67,14 @@ public class PetFormFragment extends Fragment {
 
         View view = getView();
         assert view != null;
-        Button nextBtn = view.findViewById(R.id.nextBtn);
         nameEditTxt = view.findViewById(R.id.nameEditTxt);
         nameInputLayout = view.findViewById(R.id.nameTxtInputLayout);
         descEditTxt = view.findViewById(R.id.petDescEditTxt);
         descInputLayout = view.findViewById(R.id.descTxtInputLayout);
         femaleBtn = view.findViewById(R.id.femaleRadioBtn);
         maleBtn = view.findViewById(R.id.maleRadioBtn);
+        nextButton = view.findViewById(R.id.formNextBtn);
+
 
         petTypeSpinner = initSpinner((Spinner) view.findViewById(R.id.petTypeSpinner), getListFromResources(R.array.petType_arr));
         petAgeSpinner = initSpinner((Spinner) view.findViewById(R.id.petAgeSpinner), mViewModel.getAgeArrList(getString(R.string.str_age), getString(R.string.str_over30)));
@@ -81,12 +84,19 @@ public class PetFormFragment extends Fragment {
         nameEditTxt.addTextChangedListener(new NonEmptyTextWatcher(nameInputLayout, getString(R.string.str_petNameError)));
         descEditTxt.addTextChangedListener(new NonEmptyTextWatcher(descInputLayout, getString(R.string.str_petDescError)));
 
-        nextBtn.setOnClickListener(new View.OnClickListener() {
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFormValues();
             }
         });
+    }
+
+    private void getNextFormFragment() {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.formFragmentContainer, new PetOwnerFormFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     private ArrayList<String> getListFromResources(int arr) {
@@ -129,7 +139,7 @@ public class PetFormFragment extends Fragment {
     private void validateData(String petName, String petDesc, int petType, int petAge, int petSize, int petSex) {
         Map<String, Integer> errors = mViewModel.validateData(petName, petDesc, petType, petAge, petSize, petSex);
         if (errors.isEmpty()) {
-            //TODO go to next screen
+            getNextFormFragment();
         } else {
             bindErrors(errors);
         }
