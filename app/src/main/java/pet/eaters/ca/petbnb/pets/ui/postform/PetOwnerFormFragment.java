@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import pet.eaters.ca.petbnb.R;
+import pet.eaters.ca.petbnb.pets.data.PetForm;
+import pet.eaters.ca.petbnb.pets.data.PetOwnerForm;
 
 import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_ADDRESS;
 import static pet.eaters.ca.petbnb.pets.ui.postform.PetOwnerFormViewModel.OWNER_CITY;
@@ -47,8 +49,25 @@ public class PetOwnerFormFragment extends Fragment {
     private Spinner provinceSpinner;
     private Button nextButton;
 
-    public static PetOwnerFormFragment newInstance() {
-        return new PetOwnerFormFragment();
+    private PetForm petForm;
+
+    private static final String PET_FORM_KEY = "petForm";
+
+    public static PetOwnerFormFragment newInstance(PetForm petForm) {
+        PetOwnerFormFragment fragment = new PetOwnerFormFragment();
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(PET_FORM_KEY, petForm);
+        fragment.setArguments(arguments);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() == null) {
+            throw new IllegalArgumentException();
+        }
+        petForm = getArguments().getParcelable(PET_FORM_KEY);
     }
 
     @Override
@@ -81,7 +100,7 @@ public class PetOwnerFormFragment extends Fragment {
 
         provinceSpinner = initSpinner((Spinner) view.findViewById(R.id.provinceSpinner), getListFromResources(R.array.province_arr));
 
-        nextButton = view.findViewById(R.id.nextBtn);
+        nextButton = view.findViewById(R.id.formNextBtn);
 
         //input validation while it's writing
         nameEditText.addTextChangedListener(new NonEmptyTextWatcher(nameInputLayout,getString(R.string.str_ownerNameError)));
@@ -90,6 +109,7 @@ public class PetOwnerFormFragment extends Fragment {
         zipcodeEditText.addTextChangedListener(new NonEmptyTextWatcher(zipcodeInputLayout, getString(R.string.str_ownerZipcodeError)));
         emailEditText.addTextChangedListener(new NonEmptyTextWatcher(emailInputLayout, getString(R.string.str_ownerEmailError)));
         phoneEditText.addTextChangedListener(new NonEmptyTextWatcher(phoneInputLayout, getString(R.string.str_ownerPhoneError)));
+
         phoneEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -104,7 +124,7 @@ public class PetOwnerFormFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if(!s.toString().startsWith("+1")){
-                    s.append("+1", 0, 2);
+                    s.insert(0, "+1");
                 }
             }
         });
@@ -115,6 +135,13 @@ public class PetOwnerFormFragment extends Fragment {
                 getFormValues();
             }
         });
+    }
+
+    private void goToNextFormFragment(PetForm petForm, PetOwnerForm petOwnerForm) {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.formFragmentContainer, PhotoUploadFragment.newInstance(petForm, petOwnerForm))
+                .addToBackStack(null)
+                .commit();
     }
 
     private void getFormValues() {
@@ -129,14 +156,15 @@ public class PetOwnerFormFragment extends Fragment {
         email = emailEditText.getText().toString().trim();
         phone = phoneEditText.getText().toString().trim();;
         province = provinceSpinner.getSelectedItemPosition();
-        
+
         validateData(name, address, city, zipcode, email, phone,province);
     }
 
     private void validateData(String name, String address, String city, String zipcode, String email, String phone, int province) {
         Map<String, Integer> errors = mViewModel.validateData(name, address, city, zipcode, email, phone, province);
         if(errors.isEmpty()){
-            //TODO go to next screen
+            PetOwnerForm petOwnerForm = new PetOwnerForm(name, address, city, province, zipcode, email, phone);
+            goToNextFormFragment(petForm, petOwnerForm);
         }else{
             bindErrors(errors);
         }

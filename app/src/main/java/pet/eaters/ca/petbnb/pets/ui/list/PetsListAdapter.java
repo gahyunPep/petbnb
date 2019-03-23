@@ -3,6 +3,11 @@ package pet.eaters.ca.petbnb.pets.ui.list;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.google.android.material.chip.Chip;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,13 +58,71 @@ public class PetsListAdapter extends ListAdapter<Pet, PetsListAdapter.PetViewHol
     }
 
     static class PetViewHolder extends RecyclerView.ViewHolder {
+        TextView petListItemName;
+        ImageView petListItemImage;
+        Chip petListItemType;
+        Chip petListItemAge;
+        Chip petListItemGender;
+        Chip petListItemSize;
+
         public PetViewHolder(@NonNull View itemView) {
             super(itemView);
+            petListItemName = itemView.findViewById(R.id.petListItemName);
+            petListItemImage = itemView.findViewById(R.id.petListItemImage);
+            petListItemType = itemView.findViewById(R.id.petListItemType);
+            petListItemAge = itemView.findViewById(R.id.petListItemAge);
+            petListItemGender = itemView.findViewById(R.id.petListItemGender);
+            petListItemSize = itemView.findViewById(R.id.petListItemSize);
         }
 
         public void bind(Pet item, View.OnClickListener clickListener) {
             itemView.setOnClickListener(clickListener);
-            //TODO fill with real data
+            petListItemName.setText(item.getName());
+            petListItemType.setText(item.getType());
+            petListItemAge.setText(petListItemAge.getContext().getString(R.string.yeas_old_fmt, item.getAge()));
+            bindImage(item);
+            bindGender(item);
+            bindSize(item);
+        }
+
+        private void bindImage(Pet item) {
+            if (item.getImages().size() <= 0) {
+                return;
+            }
+
+            Glide.with(petListItemImage.getContext())
+                    .load(item.getImages().get(0))
+                    .into(petListItemImage);
+        }
+
+        private void bindSize(Pet item) {
+            String[] petSizeArray = itemView.getContext().getResources().getStringArray(R.array.petSize_arr);
+            petListItemSize.setText(petSizeArray[item.getSize()]);
+        }
+
+        private void bindGender(Pet item) {
+            petListItemGender.setVisibility(View.VISIBLE);
+            int color = 0;
+            int gender = 0;
+
+            switch (item.getGender()) {
+                case 0:
+                    gender = R.string.female;
+                    color = R.color.female_color;
+                    break;
+                case 1:
+                    gender = R.string.male;
+                    color = R.color.male_color;
+                    break;
+            }
+
+            if (color != 0 && gender != 0) {
+                petListItemGender.setVisibility(View.VISIBLE);
+                petListItemGender.setChipBackgroundColorResource(color);
+                petListItemGender.setText(gender);
+            } else {
+                petListItemGender.setVisibility(View.GONE);
+            }
         }
     }
 

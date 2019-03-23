@@ -11,7 +11,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -32,15 +31,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pet.eaters.ca.petbnb.core.Result;
-import pet.eaters.ca.petbnb.pets.data.ScanData;
 import pet.eaters.ca.petbnb.pets.data.ScanRecord;
 import pet.eaters.ca.petbnb.pets.data.ScanRepository;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
+import androidx.fragment.app.FragmentManager;
+import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
+import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
@@ -79,7 +80,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showHomeFragment() {
-        Fragment fragment = createFragmentForMenu(R.id.nav_home);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment != null) {
+            return;
+        }
+
+        fragment = createFragmentForMenu(R.id.nav_home);
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
         }
@@ -94,7 +100,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (count == 0) {
                 super.onBackPressed();
             } else {
-                getSupportFragmentManager().popBackStack();
+                    getSupportFragmentManager().popBackStack();
+                    getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+                        @Override
+                        public void onBackStackChanged() {
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            int index = fragmentManager.getBackStackEntryCount() - 1;
+                            if(index >= 0) {
+                                String name = fragmentManager
+                                        .getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
+                                try {
+                                    navigationView.setCheckedItem(Integer.valueOf(name));
+                                } catch (NumberFormatException ignored) {}
+                            }
+                        }
+                    });
             }
         }
     }
@@ -167,8 +187,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -221,12 +239,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     login();
                 }
                 break;
+            case R.id.nav_create_post:
+                startActivity(new Intent(this, PetPostFormActivity.class));
+                break;
             default:
                 Fragment fragment = createFragmentForMenu(menuItem.getItemId());
                 if (fragment != null) {
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.content_frame, fragment)
-                            .addToBackStack(null)
+                            .addToBackStack(Integer.toString(menuItem.getItemId()))
                             .commit();
                 }
 
@@ -240,6 +261,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return PetsListFragment.newInstance();
             case R.id.nav_create_post:
                 return PetFormFragment.newInstance();
+            case R.id.nav_qrcode:
+                return QRScanFragment.newInstance();
         }
         return null;
     }

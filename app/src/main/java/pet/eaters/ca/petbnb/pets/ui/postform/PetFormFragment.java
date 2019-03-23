@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import pet.eaters.ca.petbnb.R;
+import pet.eaters.ca.petbnb.pets.data.PetForm;
 
 import static pet.eaters.ca.petbnb.pets.ui.postform.PetFormViewModel.PET_DESC;
 import static pet.eaters.ca.petbnb.pets.ui.postform.PetFormViewModel.PET_ELSE;
@@ -47,6 +48,8 @@ public class PetFormFragment extends Fragment {
     private Spinner petAgeSpinner;
     private Spinner petSizeSpinner;
 
+    private Button nextButton;
+
     public static PetFormFragment newInstance() {
         return new PetFormFragment();
     }
@@ -65,13 +68,14 @@ public class PetFormFragment extends Fragment {
 
         View view = getView();
         assert view != null;
-        Button nextBtn = view.findViewById(R.id.nextBtn);
         nameEditTxt = view.findViewById(R.id.nameEditTxt);
         nameInputLayout = view.findViewById(R.id.nameTxtInputLayout);
         descEditTxt = view.findViewById(R.id.petDescEditTxt);
         descInputLayout = view.findViewById(R.id.descTxtInputLayout);
         femaleBtn = view.findViewById(R.id.femaleRadioBtn);
         maleBtn = view.findViewById(R.id.maleRadioBtn);
+        nextButton = view.findViewById(R.id.formNextBtn);
+
 
         petTypeSpinner = initSpinner((Spinner) view.findViewById(R.id.petTypeSpinner), getListFromResources(R.array.petType_arr));
         petAgeSpinner = initSpinner((Spinner) view.findViewById(R.id.petAgeSpinner), mViewModel.getAgeArrList(getString(R.string.str_age), getString(R.string.str_over30)));
@@ -81,12 +85,19 @@ public class PetFormFragment extends Fragment {
         nameEditTxt.addTextChangedListener(new NonEmptyTextWatcher(nameInputLayout, getString(R.string.str_petNameError)));
         descEditTxt.addTextChangedListener(new NonEmptyTextWatcher(descInputLayout, getString(R.string.str_petDescError)));
 
-        nextBtn.setOnClickListener(new View.OnClickListener() {
+        nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getFormValues();
             }
         });
+    }
+
+    private void goToNextFormFragment(PetForm petForm) {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.formFragmentContainer, PetOwnerFormFragment.newInstance(petForm))
+                .addToBackStack(null)
+                .commit();
     }
 
     private ArrayList<String> getListFromResources(int arr) {
@@ -106,7 +117,7 @@ public class PetFormFragment extends Fragment {
      */
     private void getFormValues() {
         String petName, petDesc;
-        int petType, petAge, petSize, petSex;
+        int petType, petAge, petSize, petGender;
 
         petName = nameEditTxt.getText().toString().trim();
         petDesc = descEditTxt.getText().toString().trim();
@@ -115,21 +126,22 @@ public class PetFormFragment extends Fragment {
         petSize = petSizeSpinner.getSelectedItemPosition();
 
         if (femaleBtn.isChecked()) {
-            petSex = 0;
+            petGender = 0;
         } else if (maleBtn.isChecked()) {
-            petSex = 1;
+            petGender = 1;
         } else {
-            petSex = -1;
+            petGender = -1;
         }
 
-        validateData(petName, petDesc, petType, petAge, petSize, petSex);
+        validateData(petName, petDesc, petType, petAge, petSize, petGender);
     }
 
     // get a map from view model check if it's empty
-    private void validateData(String petName, String petDesc, int petType, int petAge, int petSize, int petSex) {
-        Map<String, Integer> errors = mViewModel.validateData(petName, petDesc, petType, petAge, petSize, petSex);
+    private void validateData(String petName, String petDesc, int petType, int petAge, int petSize, int petGender) {
+        Map<String, Integer> errors = mViewModel.validateData(petName, petDesc, petType, petAge, petSize, petGender);
         if (errors.isEmpty()) {
-            //TODO go to next screen
+            PetForm petForm = new PetForm(petName, petGender, petType, petAge, petSize, petDesc);
+            goToNextFormFragment(petForm);
         } else {
             bindErrors(errors);
         }
