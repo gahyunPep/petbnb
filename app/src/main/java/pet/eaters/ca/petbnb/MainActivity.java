@@ -96,7 +96,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             if(index >= 0) {
                                 String name = fragmentManager
                                         .getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
-                                navigationView.setCheckedItem(Integer.parseInt(name));
+                                try {
+                                    navigationView.setCheckedItem(Integer.valueOf(name));
+                                } catch (NumberFormatException ignored) {}
                             }
                         }
                     });
@@ -214,8 +216,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.nav_home:
                 return PetsListFragment.newInstance();
-            case R.id.nav_create_post:
-                return PetFormFragment.newInstance();
             case R.id.nav_qrcode:
                 return QRScanFragment.newInstance();
         }
