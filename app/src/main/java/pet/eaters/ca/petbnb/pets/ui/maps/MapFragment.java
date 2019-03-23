@@ -1,4 +1,9 @@
-package pet.eaters.ca.petbnb;
+package pet.eaters.ca.petbnb.pets.ui.maps;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -8,8 +13,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
-import android.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -22,18 +34,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
+import pet.eaters.ca.petbnb.MapsActivity;
+import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
 import pet.eaters.ca.petbnb.pets.data.PetsRepository;
 import pet.eaters.ca.petbnb.pets.ui.details.PetDetailsFragment;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+// Reference: https://youtu.be/Cy4EraxUan4
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
+    private MapViewModel mViewModel;
     private GoogleMap mMap;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 7;
     private boolean mPermissionDenied = false;
@@ -57,31 +68,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-
         }
     };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+    public static MapFragment newInstance() {
+        return new MapFragment();
     }
 
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.map_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
+        // TODO: Use the ViewModel
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        if (enableMyLocation()) {
+            getCurrentLocation();
+        }
+    }
 
     @SuppressLint("MissingPermission")
     private void getCurrentLocation() {
@@ -109,34 +140,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        if (enableMyLocation()) {
-            getCurrentLocation();
-        }
-    }
-
     private boolean enableMyLocation() {
         boolean enabled = false;
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             Log.d("workingmmap", "Permission to access the location is missing");
 
-            ActivityCompat.requestPermissions(MapsActivity.this,
+            ActivityCompat.requestPermissions(getActivity(),
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
 
         } else if (mMap != null) {
@@ -173,7 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 14));
             drawPetMarkers();
-            //setMarkerClickable();
+            setMarkerClickable();
         }
     }
 
@@ -187,9 +198,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     for (Pet pet : petList) {
                         LatLng petLocation = new LatLng(pet.getLatitude(), pet.getLongitude());
                         Marker marker = mMap.addMarker(new MarkerOptions()
-                                        .position(petLocation)
-                                        .title(getPetType(pet.getType()) + ": " + pet.getName())
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name)));
+                                .position(petLocation)
+                                .title(getPetType(pet.getType()) + ": " + pet.getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name)));
                         marker.setTag(pet);
                     }
                 }
@@ -198,29 +209,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private String getPetType(String type) {
-        String petType = getString(R.string.str_otherTypePet);
         switch (type) {
             case "1":
-                petType = getString(R.string.dog);
-                break;
+                return getString(R.string.dog);
             case "2":
-                petType = getString(R.string.cat);
-                break;
+                return getString(R.string.cat);
             case "3":
-                break;
+                return getString(R.string.str_otherTypePet);
+            default:
+                return getString(R.string.str_otherTypePet);
         }
-        return petType;
     }
 
-//    private void setMarkerClickable() {
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(Marker marker) {
-//                Pet petInfo = (Pet)marker.getTag();
-//                Fragment detailsFragment = PetDetailsFragment.newInstance(petInfo.getId());
-//                getFragmentManager().beginTransaction().replace(R.id.mapLayout, detailsFragment).addToBackStack(null).commit();
-//                return false;
-//            }
-//        });
-//    }
+    private void setMarkerClickable() {
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Pet petInfo = (Pet)marker.getTag();
+                if(petInfo != null) {
+                    Fragment petDetailsFragment = PetDetailsFragment.newInstance(petInfo.getId());
+
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.content_frame, petDetailsFragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+                return false;
+            }
+        });
+    }
+
 }
