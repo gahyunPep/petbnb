@@ -207,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .addToBackStack(Integer.toString(menuItem.getItemId()))
                             .commit();
                 }
-
         }
         return true;
     }

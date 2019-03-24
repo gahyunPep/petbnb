@@ -1,5 +1,7 @@
 package pet.eaters.ca.petbnb.pets.data;
 
+import android.content.Intent;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -34,14 +36,15 @@ public class PetsRepository implements IPetsRepository {
     private PhotoStorage photoStorage = new PhotoStorage();
 
     @Override
-    public LiveData<Result<Void>> post(final PetData pet) {
+    public LiveData<Result<String>> post(final PetData pet) {
         final DocumentReference createdPet = pets.document();
-        return Transformations.switchMap(photoStorage.uploadFiles(pet.getImages(), createdPet.getId()),
-                new Function<List<String>, LiveData<Result<Void>>>() {
+        return Transformations.map(executeTask(createdPet.set(pet)), new Function<Result<Void>, Result<String>>() {
             @Override
-            public LiveData<Result<Void>> apply(List<String> input) {
-                pet.setImages(input);
-                return executeTask(createdPet.set(pet));
+            public Result<String> apply(Result<Void> input) {
+                if (input.getException() != null) {
+                    return Result.failed(input.getException());
+                }
+                return Result.success(createdPet.getId());
             }
         });
     }

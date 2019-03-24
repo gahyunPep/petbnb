@@ -42,6 +42,7 @@ import pet.eaters.ca.petbnb.pets.data.PetData;
 import pet.eaters.ca.petbnb.pets.data.PetForm;
 import pet.eaters.ca.petbnb.pets.data.PetOwnerForm;
 import pet.eaters.ca.petbnb.pets.data.PetsRepository;
+import pet.eaters.ca.petbnb.pets.data.UplaodPicturesIntentService;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -261,11 +262,22 @@ public class PhotoUploadFragment extends Fragment {
     }
 
     private void populatePetData(PetData petData) {
+        final String PET_ID_KEY = "petID";
+        final String PET_IMG_KEY = "petImgs";
+        final List<String> images = petData.getImages();
+        List<String> emptyImgs = new ArrayList<>();
+        petData.setImages(emptyImgs);
         PetsRepository petsRepository = new PetsRepository();
-        petsRepository.post(petData).observe(getViewLifecycleOwner(), new Observer<Result<Void>>() {
+        petsRepository.post(petData).observe(getViewLifecycleOwner(), new Observer<Result<String>>() {
             @Override
-            public void onChanged(Result<Void> voidResult) {
-                if (voidResult.getException() == null) {
+            public void onChanged(Result<String> stringResult) {
+                // get petId it will be String
+                if (stringResult.getException() == null) {
+                    String petId = stringResult.getData();
+                    Intent uploadIntent = new Intent(getContext(), UplaodPicturesIntentService.class);
+                    uploadIntent.putExtra(PET_ID_KEY, petId);
+                    uploadIntent.putStringArrayListExtra(PET_IMG_KEY, (ArrayList<String>) images);
+                    getContext().startService(uploadIntent);
                     getActivity().finish();
                 }
             }
