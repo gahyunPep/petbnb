@@ -42,7 +42,6 @@ import pet.eaters.ca.petbnb.pets.data.PetData;
 import pet.eaters.ca.petbnb.pets.data.PetForm;
 import pet.eaters.ca.petbnb.pets.data.PetOwnerForm;
 import pet.eaters.ca.petbnb.pets.data.PetsRepository;
-import pet.eaters.ca.petbnb.pets.data.UploadPicturesIntentService;
 
 import static android.app.Activity.RESULT_OK;
 
