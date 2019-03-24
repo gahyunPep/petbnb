@@ -33,7 +33,6 @@ public class PetsRepository implements IPetsRepository {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference pets = db.collection(PETS_COLLECTION);
-    private PhotoStorage photoStorage = new PhotoStorage();
 
     @Override
     public LiveData<Result<String>> post(final PetData pet) {

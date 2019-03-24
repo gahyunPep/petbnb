@@ -42,7 +42,7 @@ import pet.eaters.ca.petbnb.pets.data.PetData;
 import pet.eaters.ca.petbnb.pets.data.PetForm;
 import pet.eaters.ca.petbnb.pets.data.PetOwnerForm;
 import pet.eaters.ca.petbnb.pets.data.PetsRepository;
-import pet.eaters.ca.petbnb.pets.data.UplaodPicturesIntentService;
+import pet.eaters.ca.petbnb.pets.data.UploadPicturesIntentService;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -274,7 +274,7 @@ public class PhotoUploadFragment extends Fragment {
                 // get petId it will be String
                 if (stringResult.getException() == null) {
                     String petId = stringResult.getData();
-                    Intent uploadIntent = new Intent(getContext(), UplaodPicturesIntentService.class);
+                    Intent uploadIntent = new Intent(getContext(), UploadPicturesIntentService.class);
                     uploadIntent.putExtra(PET_ID_KEY, petId);
                     uploadIntent.putStringArrayListExtra(PET_IMG_KEY, (ArrayList<String>) images);
                     getContext().startService(uploadIntent);
