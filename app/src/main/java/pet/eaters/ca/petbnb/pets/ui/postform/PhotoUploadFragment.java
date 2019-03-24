@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.core.Result;
+import pet.eaters.ca.petbnb.pets.data.ImgUplaodIntentService;
 import pet.eaters.ca.petbnb.pets.data.PetData;
 import pet.eaters.ca.petbnb.pets.data.PetForm;
 import pet.eaters.ca.petbnb.pets.data.PetOwnerForm;
@@ -270,10 +271,9 @@ public class PhotoUploadFragment extends Fragment {
         petsRepository.post(petData).observe(getViewLifecycleOwner(), new Observer<Result<String>>() {
             @Override
             public void onChanged(Result<String> stringResult) {
-                // get petId it will be String
                 if (stringResult.getException() == null) {
                     String petId = stringResult.getData();
-                    Intent uploadIntent = new Intent(getContext(), UploadPicturesIntentService.class);
+                    Intent uploadIntent = new Intent(getContext(), ImgUplaodIntentService.class);
                     uploadIntent.putExtra(PET_ID_KEY, petId);
                     uploadIntent.putStringArrayListExtra(PET_IMG_KEY, (ArrayList<String>) images);
                     getContext().startService(uploadIntent);
