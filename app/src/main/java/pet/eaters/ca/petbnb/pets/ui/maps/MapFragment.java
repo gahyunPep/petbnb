@@ -34,7 +34,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
-import pet.eaters.ca.petbnb.MapsActivity;
 import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
@@ -175,7 +174,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 return;
             }
         }
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void zoomInCurrentLocation(Location location) {
