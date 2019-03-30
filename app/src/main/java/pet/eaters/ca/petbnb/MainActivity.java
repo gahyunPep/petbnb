@@ -14,7 +14,6 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView textUserName;
     private CircleImageView avatar;
     private static final int RC_SIGN_IN = 9001;
-    private boolean isLogin = false;
     private ScanRepository scanRepository;
     private boolean clickOnScan = false;
 
@@ -136,15 +134,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void showUser(FirebaseUser user) {
         if (user == null) {
-            isLogin = false;
-            showLoginButtons(isLogin);
+            showLoginButtons(false);
             avatar.setImageResource(R.drawable.ic_user);
             textUserName.setText("");
         } else {
-            isLogin = true;
-            showLoginButtons(isLogin);
-            textUserName.setText(user.getDisplayName());
+            showLoginButtons(true);
             showAvatar(user.getPhotoUrl());
+            textUserName.setText(user.getDisplayName());
         }
     }
 
@@ -230,12 +226,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_qrcode:
                 clickOnScan = true;
-                if(isLogin == true) {
-                    startScanner();
-                }
-                else {
-                    login();
-                }
+                startScanner();
                 break;
             case R.id.nav_create_post:
                 startActivity(new Intent(this, PetPostFormActivity.class));
@@ -286,6 +277,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void startScanner() {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            login();
+            return;
+        }
+
         IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
         integrator.setPrompt(getString(R.string.scanCodeDescription));
