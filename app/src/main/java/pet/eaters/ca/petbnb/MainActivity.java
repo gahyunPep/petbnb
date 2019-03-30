@@ -30,6 +30,7 @@ import androidx.fragment.app.FragmentManager;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
+import pet.eaters.ca.petbnb.pets.ui.maps.MapFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
@@ -210,6 +211,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_item, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if(itemId == R.id.toolbar_map){
+            Fragment fragment = MapFragment.newInstance();
+            if (fragment != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_frame, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private Fragment createFragmentForMenu(int id) {
