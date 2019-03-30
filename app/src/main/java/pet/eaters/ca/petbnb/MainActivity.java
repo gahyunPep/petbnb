@@ -14,6 +14,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -40,6 +41,7 @@ import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import androidx.fragment.app.FragmentManager;
 import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
+import pet.eaters.ca.petbnb.pets.ui.maps.MapFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -199,20 +201,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else {
                 Toast.makeText(this, "Failed to log in with your account", Toast.LENGTH_SHORT).show();
             }
-        }
-
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            String petId = result.getContents();
-            if(petId == null) {
-                Toast.makeText(MainActivity.this, getString(R.string.cancelScan),
-                        Toast.LENGTH_LONG).show();
-
-            } else {
-                Toast.makeText(MainActivity.this, getString(R.string.scan) +
-                        petId, Toast.LENGTH_LONG).show();
-                updateScanToDB(petId);
+        } else if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if (result == null) {
+                return;
             }
+            String petId = result.getContents();
+            if (petId == null) {
+                return;
+            }
+
+            petIdScanned(petId);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -254,6 +253,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_item, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if(itemId == R.id.toolbar_map){
+            Fragment fragment = MapFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, fragment)
+                    .addToBackStack(null)
+                    .commit();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private Fragment createFragmentForMenu(int id) {
         switch (id) {
             case R.id.nav_home:
@@ -276,8 +295,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         integrator.initiateScan();
     }
 
-    private void updateScanToDB(final String petId) {
+    private void petIdScanned(final String petId) {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Please login before you can scan the pet", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         final String uid = user.getUid();
         final String scanId = uid + "+" + petId;
 
@@ -316,7 +340,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
     }
 
     public long getCurrentTime() {
