@@ -5,13 +5,14 @@ import java.util.List;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import pet.eaters.ca.petbnb.PetBnbApplication;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.IPetsRepository;
 import pet.eaters.ca.petbnb.pets.data.Pet;
 import pet.eaters.ca.petbnb.pets.data.PetsRepository;
 
 public class PetsListViewModel extends ViewModel  {
-    private PetsRepository repository = new PetsRepository();
+    private PetsRepository repository = PetBnbApplication.repositorySingleton.getRepository();
 
     private MutableLiveData<Result<List<Pet>>> pets = new MutableLiveData<>();
     private MutableLiveData<Boolean> loading = new MutableLiveData<>();

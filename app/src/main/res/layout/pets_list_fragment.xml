@@ -20,6 +20,8 @@
             tools:listitem="@layout/pet_list_item" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <include layout="@layout/toolbar_layout" />
+
     <ProgressBar
         android:id="@+id/pets_list_progress_bar"
         style="?android:attr/progressBarStyle"

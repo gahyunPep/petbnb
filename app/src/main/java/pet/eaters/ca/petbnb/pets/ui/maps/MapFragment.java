@@ -1,10 +1,5 @@
 package pet.eaters.ca.petbnb.pets.ui.maps;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,13 +8,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -34,35 +25,39 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import pet.eaters.ca.petbnb.R;
+import pet.eaters.ca.petbnb.core.FragmentUtils;
+import pet.eaters.ca.petbnb.core.NavigationFragment;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
-import pet.eaters.ca.petbnb.pets.data.PetsRepository;
 import pet.eaters.ca.petbnb.pets.ui.details.PetDetailsFragment;
+import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
 
 // Reference: https://youtu.be/Cy4EraxUan4
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends NavigationFragment implements OnMapReadyCallback {
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 7;
+    private static final int LOCATION_UPDATE_MIN_DISTANCE = 10;
+    private static final int LOCATION_UPDATE_MIN_TIME = 5000;
 
     private MapViewModel mViewModel;
     private GoogleMap mMap;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 7;
-    private boolean mPermissionDenied = false;
     private LocationManager mLocationManager;
-    public static final int LOCATION_UPDATE_MIN_DISTANCE = 10;
-    public static final int LOCATION_UPDATE_MIN_TIME = 5000;
-    Location currentLocation;
+    private View mMyLocationButton;
+
 
     private LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if (location != null) {
-                Log.d("Map", String.format("%f, %f", location.getLatitude(),
-                        location.getLongitude()));
-                zoomInCurrentLocation(location);
-                mLocationManager.removeUpdates(mLocationListener);
-            } else {
-                Log.d("Map", "Location is null");
-            }
+            zoomInCurrentLocation(location);
+            mLocationManager.removeUpdates(mLocationListener);
         }
 
         @Override
@@ -92,119 +87,174 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        mMyLocationButton = view.findViewById(R.id.myLocationButton);
+
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.maps_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int itemId = item.getItemId();
+                if (itemId == R.id.toolbar_list) {
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.content_frame, PetsListFragment.newInstance())
+                            .commit();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        FragmentActivity activity = getActivity();
+        if (activity == null) {
+            return;
+        }
+
         mViewModel = ViewModelProviders.of(this).get(MapViewModel.class);
-        // TODO: Use the ViewModel
+        ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMapAsync(this);
+        mLocationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+        mMyLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToCurrentLocation();
+            }
+        });
+    }
+
+    private void goToCurrentLocation() {
+        if (!checkPermission()) {
+            return;
+        }
+
+        String[] providers = new String[]{LocationManager.NETWORK_PROVIDER, LocationManager.GPS_PROVIDER};
+        Location currentLocation = null;
+        for (String provider : providers) {
+            Location location = getLocationFromProvider(provider);
+            if (location != null) {
+                currentLocation = location;
+            }
+        }
+
+        zoomInCurrentLocation(currentLocation);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mViewModel.mapLoaded();
 
-        if (enableMyLocation()) {
-            getCurrentLocation();
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private void getCurrentLocation() {
-        boolean isGPSEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        boolean isNetworkEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        currentLocation = null;
-        if (!(isGPSEnabled || isNetworkEnabled)) {
-
+        if (mViewModel.isNeedToAskPermission()) {
+            if (checkPermission()) {
+                setMyLocationEnabled();
+            }
         } else {
-            if (isNetworkEnabled) {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                        LOCATION_UPDATE_MIN_TIME, LOCATION_UPDATE_MIN_DISTANCE, mLocationListener);
-                currentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            }
-
-            if (isGPSEnabled) {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                        LOCATION_UPDATE_MIN_TIME, LOCATION_UPDATE_MIN_DISTANCE, mLocationListener);
-                currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (mViewModel.isPermissionGranted()) {
+                setMyLocationEnabled();
             }
         }
-        if (currentLocation != null) {
-            zoomInCurrentLocation(currentLocation);
-        }
-    }
 
-    private boolean enableMyLocation() {
-        boolean enabled = false;
-
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            Log.d("workingmmap", "Permission to access the location is missing");
-
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-
-        } else if (mMap != null) {
-            Log.d("workingmmap", "Access to the location already granted");
-            mMap.setMyLocationEnabled(true);
-            enabled = true;
-        }
-        return enabled;
+        observePets();
+        setMarkerClickable();
     }
 
     @SuppressLint("MissingPermission")
+    private void setMyLocationEnabled() {
+        mMyLocationButton.setVisibility(View.INVISIBLE);
+        mMap.setMyLocationEnabled(true);
+    }
+
+    private void observePets() {
+        mViewModel.getPets().observe(getViewLifecycleOwner(), new Observer<Result<List<Pet>>>() {
+            @Override
+            public void onChanged(Result<List<Pet>> result) {
+                if (result.isSuccess()) {
+                    drawMarkers(result.getData());
+                } else {
+                    showError(result.getException());
+                }
+            }
+        });
+    }
+
+    private void showError(Exception exception) {
+        FragmentUtils.showError(this, exception, R.string.retry, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.retry();
+            }
+        });
+    }
+
+    @SuppressLint("MissingPermission")
+    @Nullable
+    private Location getLocationFromProvider(String networkProvider) {
+        boolean isNetworkEnabled = mLocationManager.isProviderEnabled(networkProvider);
+        if (isNetworkEnabled) {
+            mLocationManager.requestLocationUpdates(networkProvider,
+                    LOCATION_UPDATE_MIN_TIME, LOCATION_UPDATE_MIN_DISTANCE, mLocationListener);
+            return mLocationManager.getLastKnownLocation(networkProvider);
+        }
+        return null;
+    }
+
+    private boolean checkPermission() {
+        Context context = getContext();
+        if (context == null) {
+            return false;
+        }
+
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mViewModel.permissionGranted();
+            return true;
+        } else {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            return false;
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("workingmmap", "Permission granted");
-                    mMap.setMyLocationEnabled(true);
-                    getCurrentLocation();
-
+                    mViewModel.permissionGranted();
+                    goToCurrentLocation();
                 } else {
                     Log.d("workingmmap", "Permission denied");
                 }
-                return;
             }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private void zoomInCurrentLocation(Location location) {
-        if (mMap != null) {
-            mMap.clear();
-            LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 14));
-            drawPetMarkers();
-            setMarkerClickable();
         }
     }
 
-    private void drawPetMarkers() {
-        PetsRepository petsRepository = new PetsRepository();
-        petsRepository.getPets().observe(this, new Observer<Result<List<Pet>>>() {
-            @Override
-            public void onChanged(Result<List<Pet>> listResult) {
-                List<Pet> petList = listResult.getData();
-                if (petList != null) {
-                    for (Pet pet : petList) {
-                        LatLng petLocation = new LatLng(pet.getLatitude(), pet.getLongitude());
-                        Marker marker = mMap.addMarker(new MarkerOptions()
-                                .position(petLocation)
-                                .title(getPetType(pet.getType()) + ": " + pet.getName())
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name)));
-                        marker.setTag(pet);
-                    }
-                }
-            }
-        });
+    @SuppressLint("MissingPermission")
+    private void zoomInCurrentLocation(@Nullable Location location) {
+        if (mMap == null || location == null) {
+            return;
+        }
+
+        LatLng gps = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gps, 14));
+        setMyLocationEnabled();
+    }
+
+    private void drawMarkers(@Nullable List<Pet> petList) {
+        if (petList == null || mMap == null) {
+            return;
+        }
+
+        mMap.clear();
+        for (Pet pet : petList) {
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(pet.getLatitude(), pet.getLongitude()))
+                    .title(getPetType(pet.getType()) + ": " + pet.getName())
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name)))
+                    .setTag(pet);
+        }
     }
 
     private String getPetType(String type) {
@@ -214,7 +264,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             case "2":
                 return getString(R.string.cat);
             case "3":
-                return getString(R.string.str_otherTypePet);
             default:
                 return getString(R.string.str_otherTypePet);
         }
@@ -224,18 +273,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Pet petInfo = (Pet)marker.getTag();
-                if(petInfo != null) {
-                    Fragment petDetailsFragment = PetDetailsFragment.newInstance(petInfo.getId());
-
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.content_frame, petDetailsFragment)
-                            .addToBackStack(null)
-                            .commit();
+                Pet petInfo = (Pet) marker.getTag();
+                if (petInfo == null) {
+                    return false;
                 }
-                return false;
+
+                openPetDetails(petInfo);
+                return true;
             }
         });
+    }
+
+    private void openPetDetails(Pet petInfo) {
+        Fragment petDetailsFragment = PetDetailsFragment.newInstance(petInfo.getId());
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content_frame, petDetailsFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
 }

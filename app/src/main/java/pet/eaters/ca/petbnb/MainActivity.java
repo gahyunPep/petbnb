@@ -31,19 +31,19 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import de.hdodenhof.circleimageview.CircleImageView;
+import pet.eaters.ca.petbnb.core.NavigationFragment;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.ScanRecord;
 import pet.eaters.ca.petbnb.pets.data.ScanRepository;
-import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
-import androidx.fragment.app.FragmentManager;
-import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
 import pet.eaters.ca.petbnb.pets.ui.maps.MapFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        NavigationFragment.NavigationActivity {
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private TextView textUserName;
@@ -56,26 +56,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //https://codinginflow.com/tutorials/android/navigation-drawer/part-2-layouts
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        mDrawerLayout = findViewById(R.id.drawer_layout);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        //https://developer.android.com/training/implementing-navigation/nav-drawer#java
-        navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        textUserName = navigationView.getHeaderView(0).findViewById(R.id.txtViewUser);
-        avatar = navigationView.getHeaderView(0).findViewById(R.id.avatar);
-        showUser(FirebaseAuth.getInstance().getCurrentUser());
-
         showHomeFragment();
     }
 
@@ -85,10 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return;
         }
 
-        fragment = createFragmentForMenu(R.id.nav_home);
-        if (fragment != null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragment).commit();
-        }
+        getSupportFragmentManager().beginTransaction().add(R.id.content_frame, PetsListFragment.newInstance()).commit();
     }
 
     @Override
@@ -100,21 +77,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (count == 0) {
                 super.onBackPressed();
             } else {
-                    getSupportFragmentManager().popBackStack();
-                    getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-                        @Override
-                        public void onBackStackChanged() {
-                            FragmentManager fragmentManager = getSupportFragmentManager();
-                            int index = fragmentManager.getBackStackEntryCount() - 1;
-                            if(index >= 0) {
-                                String name = fragmentManager
-                                        .getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
-                                try {
-                                    navigationView.setCheckedItem(Integer.valueOf(name));
-                                } catch (NumberFormatException ignored) {}
+                getSupportFragmentManager().popBackStack();
+                getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+                    @Override
+                    public void onBackStackChanged() {
+                        FragmentManager fragmentManager = getSupportFragmentManager();
+                        int index = fragmentManager.getBackStackEntryCount() - 1;
+                        if (index >= 0) {
+                            String name = fragmentManager
+                                    .getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
+                            try {
+                                navigationView.setCheckedItem(Integer.valueOf(name));
+                            } catch (NumberFormatException ignored) {
                             }
                         }
-                    });
+                    }
+                });
             }
         }
     }
@@ -193,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (user != null) {
                     showUser(user);
                     Toast.makeText(this, "Successfully signed in", Toast.LENGTH_SHORT).show();
-                    if(clickOnScan) {
+                    if (clickOnScan) {
                         startScanner();
                     }
                 }
@@ -217,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem menuItem) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         menuItem.setChecked(true);
         mDrawerLayout.closeDrawers();
         switch (menuItem.getItemId()) {
@@ -234,49 +212,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_create_post:
                 startActivity(new Intent(this, PetPostFormActivity.class));
                 break;
-            default:
-                Fragment fragment = createFragmentForMenu(menuItem.getItemId());
-                if (fragment != null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.content_frame, fragment)
-                            .addToBackStack(Integer.toString(menuItem.getItemId()))
-                            .commit();
-                }
-
         }
         return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar_item, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        if(itemId == R.id.toolbar_map){
-            Fragment fragment = MapFragment.newInstance();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, fragment)
-                    .addToBackStack(null)
-                    .commit();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private Fragment createFragmentForMenu(int id) {
-        switch (id) {
-            case R.id.nav_home:
-                return PetsListFragment.newInstance();
-            case R.id.nav_create_post:
-                return PetFormFragment.newInstance();
-            case R.id.nav_qrcode:
-                return QRScanFragment.newInstance();
-        }
-        return null;
     }
 
     private void startScanner() {
@@ -312,14 +249,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onChanged(Result<ScanRecord> scanRecordResult) {
                 ScanRecord scanRecord = scanRecordResult.getData();
                 if (scanRecord != null) {
-                    if(scanRecord.getTimestamps().size() % 2 == 0) {
+                    if (scanRecord.getTimestamps().size() % 2 == 0) {
                         scanRepository.update(scanId, new ScanRecord(scanRecord.getPetID(),
                                 scanRecord.getUserID(), scanRecord.addTimestamps(getCurrentTime())));
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
                         alertDialogBuilder.setMessage("Start time is set!");
                         alertDialogBuilder.show();
-                    }
-                    else {
+                    } else {
                         scanRepository.update(scanId, new ScanRecord(scanRecord.getPetID(),
                                 scanRecord.getUserID(), scanRecord.addTimestamps(getCurrentTime())));
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
@@ -328,8 +264,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         alertDialogBuilder.setMessage("You will have to pay: $" + Integer.toString(price));
                         alertDialogBuilder.show();
                     }
-                }
-                else {
+                } else {
                     List<Long> timestamps = new ArrayList<>();
                     timestamps.add(getCurrentTime());
                     scanRepository.update(scanId, new ScanRecord(petId,
@@ -348,7 +283,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public int calculatePayment(long timeCheckOut, long timeCheckIn) {
         long hour = (timeCheckOut - timeCheckIn) / (60 * 60 * 1000);
-        return (int)hour * 2;
+        return (int) hour * 2;
     }
 
+    //https://codinginflow.com/tutorials/android/navigation-drawer/part-2-layouts
+    @Override
+    public void initWith(Toolbar toolbar) {
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        //https://developer.android.com/training/implementing-navigation/nav-drawer#java
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        textUserName = navigationView.getHeaderView(0).findViewById(R.id.txtViewUser);
+        avatar = navigationView.getHeaderView(0).findViewById(R.id.avatar);
+        showUser(FirebaseAuth.getInstance().getCurrentUser());
+    }
 }
