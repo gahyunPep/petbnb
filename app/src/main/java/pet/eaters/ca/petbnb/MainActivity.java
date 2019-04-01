@@ -15,19 +15,29 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
 import de.hdodenhof.circleimageview.CircleImageView;
+import pet.eaters.ca.petbnb.core.Result;
+import pet.eaters.ca.petbnb.pets.data.ScanRecord;
+import pet.eaters.ca.petbnb.pets.data.ScanRepository;
+import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
+import androidx.fragment.app.FragmentManager;
 import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
 import pet.eaters.ca.petbnb.pets.ui.maps.MapFragment;
@@ -39,11 +49,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TextView textUserName;
     private CircleImageView avatar;
     private static final int RC_SIGN_IN = 9001;
+    private ScanRepository scanRepository;
+    private boolean clickOnScan = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //https://codinginflow.com/tutorials/android/navigation-drawer/part-2-layouts
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -126,8 +139,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             textUserName.setText("");
         } else {
             showLoginButtons(true);
-            textUserName.setText(user.getDisplayName());
             showAvatar(user.getPhotoUrl());
+            textUserName.setText(user.getDisplayName());
         }
     }
 
@@ -173,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
@@ -181,10 +193,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (user != null) {
                     showUser(user);
                     Toast.makeText(this, "Successfully signed in", Toast.LENGTH_SHORT).show();
+                    if(clickOnScan) {
+                        startScanner();
+                    }
                 }
             } else {
                 Toast.makeText(this, "Failed to log in with your account", Toast.LENGTH_SHORT).show();
             }
+        } else if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if (result == null) {
+                return;
+            }
+            String petId = result.getContents();
+            if (petId == null) {
+                return;
+            }
+
+            petIdScanned(petId);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -198,6 +226,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_login:
                 login();
+                break;
+            case R.id.nav_qrcode:
+                clickOnScan = true;
+                startScanner();
                 break;
             case R.id.nav_create_post:
                 startActivity(new Intent(this, PetPostFormActivity.class));
@@ -226,12 +258,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int itemId = item.getItemId();
         if(itemId == R.id.toolbar_map){
             Fragment fragment = MapFragment.newInstance();
-            if (fragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, fragment)
-                        .addToBackStack(null)
-                        .commit();
-            }
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.content_frame, fragment)
+                    .addToBackStack(null)
+                    .commit();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -241,9 +271,84 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.nav_home:
                 return PetsListFragment.newInstance();
+            case R.id.nav_create_post:
+                return PetFormFragment.newInstance();
             case R.id.nav_qrcode:
                 return QRScanFragment.newInstance();
         }
         return null;
     }
+
+    private void startScanner() {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            login();
+            return;
+        }
+
+        IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+        integrator.setPrompt(getString(R.string.scanCodeDescription));
+        integrator.setCameraId(0);
+        integrator.setBeepEnabled(true);
+        integrator.setBarcodeImageEnabled(true);
+        integrator.initiateScan();
+    }
+
+    private void petIdScanned(final String petId) {
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Please login before you can scan the pet", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        final String uid = user.getUid();
+        final String scanId = uid + "+" + petId;
+
+        scanRepository = new ScanRepository();
+
+        scanRepository.get(scanId).observe(this, new Observer<Result<ScanRecord>>() {
+            @Override
+            public void onChanged(Result<ScanRecord> scanRecordResult) {
+                ScanRecord scanRecord = scanRecordResult.getData();
+                if (scanRecord != null) {
+                    if(scanRecord.getTimestamps().size() % 2 == 0) {
+                        scanRepository.update(scanId, new ScanRecord(scanRecord.getPetID(),
+                                scanRecord.getUserID(), scanRecord.addTimestamps(getCurrentTime())));
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
+                        alertDialogBuilder.setMessage("Start time is set!");
+                        alertDialogBuilder.show();
+                    }
+                    else {
+                        scanRepository.update(scanId, new ScanRecord(scanRecord.getPetID(),
+                                scanRecord.getUserID(), scanRecord.addTimestamps(getCurrentTime())));
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
+                        int price = calculatePayment(scanRecord.getTimestamps().get(scanRecord.getTimestamps().size() - 1),
+                                scanRecord.getTimestamps().get(scanRecord.getTimestamps().size() - 2));
+                        alertDialogBuilder.setMessage("You will have to pay: $" + Integer.toString(price));
+                        alertDialogBuilder.show();
+                    }
+                }
+                else {
+                    List<Long> timestamps = new ArrayList<>();
+                    timestamps.add(getCurrentTime());
+                    scanRepository.update(scanId, new ScanRecord(petId,
+                            uid, timestamps));
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
+                    alertDialogBuilder.setMessage("Start time is set!");
+                    alertDialogBuilder.show();
+                }
+            }
+        });
+    }
+
+    public long getCurrentTime() {
+        return System.currentTimeMillis();
+    }
+
+    public int calculatePayment(long timeCheckOut, long timeCheckIn) {
+        long hour = (timeCheckOut - timeCheckIn) / (60 * 60 * 1000);
+        return (int)hour * 2;
+    }
+
 }
