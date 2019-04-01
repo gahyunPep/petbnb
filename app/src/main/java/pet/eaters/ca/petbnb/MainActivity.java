@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Arrays;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -31,7 +31,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import pet.eaters.ca.petbnb.pets.ui.QRScan.QRScanFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
 import pet.eaters.ca.petbnb.pets.ui.maps.MapFragment;
-import pet.eaters.ca.petbnb.pets.ui.postform.PetFormFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -132,12 +131,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void showAvatar(Uri url) {
-        RequestOptions requestOptions = new RequestOptions()
-                .placeholder(R.drawable.ic_user)
-                .error(R.drawable.ic_user);
-        Glide.with(this).setDefaultRequestOptions(requestOptions).
-                load(url).into(avatar);
+    private void showAvatar(@Nullable Uri url) {
+        avatar.setImageResource(R.drawable.ic_user);
+        if (url == null) {
+            return;
+        }
+
+        Glide.with(this)
+                .load(url)
+                .into(avatar);
     }
 
 

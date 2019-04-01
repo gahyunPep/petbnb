@@ -66,6 +66,11 @@ public class PetsRepository implements IPetsRepository {
         return executeTask(pets.get(), petListMapper());
     }
 
+    @Override
+    public void getPets(Callback<List<Pet>> callback) {
+        executeTask(pets.get(), petListMapper(), callback);
+    }
+
     private interface Mapper<F, T> {
         T map(F object);
     }
@@ -113,8 +118,31 @@ public class PetsRepository implements IPetsRepository {
         return result;
     }
 
+    private <F, T> void executeTask(Task<F> task, Mapper<F, T> mapper, Callback<T> callback) {
+        task.addOnSuccessListener(successListener(callback, mapper))
+                .addOnFailureListener(failureListener(callback));
+    }
+
     private <T> LiveData<Result<T>> executeTask(Task<T> task) {
         return executeTask(task, this.<T>transparentMapper());
+    }
+
+    private <F, T> OnSuccessListener<F> successListener(final Callback<T> callback, final Mapper<F, T> mapper) {
+        return new OnSuccessListener<F>() {
+            @Override
+            public void onSuccess(F o) {
+                callback.onResult(Result.success(mapper.map(o)));
+            }
+        };
+    }
+
+    private <T> OnFailureListener failureListener(final Callback<T> callback) {
+        return new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                callback.onResult(Result.<T>failed(e));
+            }
+        };
     }
 
     private <F, T> OnSuccessListener<F> successListener(final MutableLiveData<Result<T>> result, final Mapper<F, T> mapper) {

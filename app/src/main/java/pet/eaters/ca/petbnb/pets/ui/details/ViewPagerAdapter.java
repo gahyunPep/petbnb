@@ -1,17 +1,11 @@
 package pet.eaters.ca.petbnb.pets.ui.details;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -20,19 +14,19 @@ import androidx.viewpager.widget.PagerAdapter;
 import pet.eaters.ca.petbnb.R;
 
 public class ViewPagerAdapter extends PagerAdapter {
-
-
     private List<String> viewPagerImages;
-    private Context context;
-    public ViewPagerAdapter(List<String> viewPagerImages, Context context) {
-
+    public ViewPagerAdapter(List<String> viewPagerImages) {
         this.viewPagerImages = viewPagerImages;
-        this.context = context;
     }
 
     @Override
     public int getCount() {
-        return viewPagerImages.size();
+        int size = viewPagerImages.size();
+        if (size == 0) {
+            return 1;
+        }
+
+        return size;
     }
 
     @Override
@@ -43,16 +37,16 @@ public class ViewPagerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-
         LayoutInflater inflater = LayoutInflater.from(container.getContext());
         ImageView imageSlide = (ImageView) inflater.inflate(R.layout.view_pager_item, container, false);
+        imageSlide.setImageResource(R.drawable.ic_image_black_24dp);
 
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.placeholder(R.drawable.image_error);
-        requestOptions.error(R.drawable.image_error);
-
-        Glide.with(context).setDefaultRequestOptions(requestOptions).
-                load(viewPagerImages.get(position)).into(imageSlide);
+        if (!viewPagerImages.isEmpty()) {
+            Glide.with(container.getContext())
+                    .load(viewPagerImages.get(position))
+                    .error(R.drawable.ic_broken_image_black_24dp)
+                    .into(imageSlide);
+        }
 
         container.addView(imageSlide);
         return imageSlide;

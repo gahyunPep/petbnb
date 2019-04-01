@@ -15,4 +15,10 @@ public interface IPetsRepository {
     LiveData<Result<Pet>> get(String petId);
 
     LiveData<Result<List<Pet>>> getPets();
+
+    void getPets(Callback<List<Pet>> result);
+
+    interface Callback<T> {
+        void onResult(Result<T> result);
+    }
 }

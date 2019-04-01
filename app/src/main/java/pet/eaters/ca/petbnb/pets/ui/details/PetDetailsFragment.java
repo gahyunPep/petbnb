@@ -111,7 +111,7 @@ public class PetDetailsFragment extends Fragment {
                 petImages = petData.getImages();
 
 
-                viewPagerAdapter = new ViewPagerAdapter(petImages, getContext());
+                viewPagerAdapter = new ViewPagerAdapter(petImages);
                 viewPager.setAdapter(viewPagerAdapter);
             }
         });
