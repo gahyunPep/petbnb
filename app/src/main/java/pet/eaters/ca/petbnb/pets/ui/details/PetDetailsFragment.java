@@ -2,7 +2,9 @@ package pet.eaters.ca.petbnb.pets.ui.details;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +23,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 import pet.eaters.ca.petbnb.R;
-import pet.eaters.ca.petbnb.core.FragmentUtils;
+import pet.eaters.ca.petbnb.core.android.FragmentUtils;
 import pet.eaters.ca.petbnb.core.Result;
+import pet.eaters.ca.petbnb.core.ui.EventObserver;
 import pet.eaters.ca.petbnb.pets.data.Pet;
+
+import static pet.eaters.ca.petbnb.pets.ui.details.PetDetailsViewModel.*;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,7 +42,6 @@ public class PetDetailsFragment extends Fragment {
     private TextView petNameAge;
     private TextView petInfo;
     private TextView petSizeType;
-    private TextView petPhone;
     private TextView petCity;
     private ImageView qrCodeImg;
     private Toolbar toolbar;
@@ -52,7 +56,8 @@ public class PetDetailsFragment extends Fragment {
         return fragment;
     }
 
-    public PetDetailsFragment() {}
+    public PetDetailsFragment() {
+    }
 
 
     @Override
@@ -68,7 +73,6 @@ public class PetDetailsFragment extends Fragment {
         petNameAge = view.findViewById(R.id.pet_name_age);
         petInfo = view.findViewById(R.id.pet_info);
         petSizeType = view.findViewById(R.id.pet_size_type);
-        petPhone = view.findViewById(R.id.pet_phone);
         petCity = view.findViewById(R.id.pet_city);
         qrCodeImg = view.findViewById(R.id.QRImageView);
 
@@ -80,11 +84,81 @@ public class PetDetailsFragment extends Fragment {
             }
         });
 
+        view.findViewById(R.id.callFab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewModel.onCallClicked();
+            }
+        });
+        view.findViewById(R.id.messageFab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewModel.onMessageClicked();
+            }
+        });
+
         view.<TabLayout>findViewById(R.id.image_slide_indicator).setupWithViewPager(viewPager, true);
 
-        viewModel = ViewModelProviders.of(this, new PetDetailsViewModel.Factory(getPetId())).get(PetDetailsViewModel.class);
+        viewModel = ViewModelProviders.of(this, new Factory(getPetId())).get(PetDetailsViewModel.class);
         observePet();
         observeQrCode();
+        observePhoneCall();
+        observeMessage();
+
+    }
+
+    private void observeMessage() {
+        viewModel.getMessageSend().observe(getViewLifecycleOwner(), new EventObserver<Message>() {
+            @Override
+            public void onEventHappened(Message message) {
+                sendMessage(message);
+            }
+        });
+    }
+
+    private void observePhoneCall() {
+        viewModel.getPhoneCall().observe(getViewLifecycleOwner(), new EventObserver<String>() {
+            @Override
+            public void onEventHappened(String value) {
+                makeCall(value);
+            }
+        });
+    }
+
+    private void sendMessage(Message message) {
+        if (!canSendToWhatsApp(message)) {
+            sendSms(message);
+        }
+    }
+
+    private void sendSms(Message message) {
+        Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+        smsIntent.setData(Uri.parse("smsto:" + message.phone));
+        smsIntent.putExtra("sms_body", message.message);
+        startActivity(smsIntent);
+    }
+
+    private boolean canSendToWhatsApp(Message message) {
+        Uri uri = Uri.parse("https://api.whatsapp.com/send").buildUpon()
+                .appendQueryParameter("text", message.message)
+                .appendQueryParameter("phone", message.phone)
+                .build();
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void makeCall(String value) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse(value));
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     private void observePet() {
@@ -128,7 +202,6 @@ public class PetDetailsFragment extends Fragment {
 
         petInfo.setText(pet.getInfo());
         petSizeType.setText(String.format("%s %s", petSizeToString(pet.getSize()), pet.getType()));
-        petPhone.setText(pet.getPhone());
         petCity.setText(pet.getAddress());
 
         viewPager.setAdapter(new ViewPagerAdapter(pet.getImages()));

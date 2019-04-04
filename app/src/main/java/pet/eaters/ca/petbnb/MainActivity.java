@@ -34,7 +34,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import de.hdodenhof.circleimageview.CircleImageView;
-import pet.eaters.ca.petbnb.core.NavigationFragment;
+import pet.eaters.ca.petbnb.core.android.NavigationFragment;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.ScanRecord;
 import pet.eaters.ca.petbnb.pets.data.ScanRepository;

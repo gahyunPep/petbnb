@@ -1,4 +1,4 @@
-package pet.eaters.ca.petbnb.core;
+package pet.eaters.ca.petbnb.core.android;
 
 import android.content.Context;
 import android.os.Bundle;
