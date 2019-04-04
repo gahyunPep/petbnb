@@ -64,6 +64,8 @@ public class PetsListAdapter extends ListAdapter<Pet, PetsListAdapter.PetViewHol
         Chip petListItemAge;
         Chip petListItemGender;
         Chip petListItemSize;
+        String[] petSizeArray = itemView.getContext().getResources().getStringArray(R.array.petSize_arr);
+
 
         public PetViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,22 +88,24 @@ public class PetsListAdapter extends ListAdapter<Pet, PetsListAdapter.PetViewHol
         }
 
         private void bindImage(Pet item) {
+            petListItemImage.setImageResource(R.drawable.ic_image_black_24dp);
+            petListItemImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
             if (item.getImages().size() <= 0) {
                 return;
             }
 
             Glide.with(petListItemImage.getContext())
                     .load(item.getImages().get(0))
+                    .error(R.drawable.ic_broken_image_black_24dp)
+                    .centerCrop()
                     .into(petListItemImage);
         }
 
         private void bindSize(Pet item) {
-            String[] petSizeArray = itemView.getContext().getResources().getStringArray(R.array.petSize_arr);
             petListItemSize.setText(petSizeArray[item.getSize()]);
         }
 
         private void bindGender(Pet item) {
-            petListItemGender.setVisibility(View.VISIBLE);
             int color = 0;
             int gender = 0;
 

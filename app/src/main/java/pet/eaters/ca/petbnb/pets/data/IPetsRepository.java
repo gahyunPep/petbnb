@@ -10,22 +10,20 @@ public interface IPetsRepository {
 
     LiveData<Result<Void>> update(String petId, PetData petData);
 
-    void update(String petId, PetData petData, UpdateCallback callback);
+    void update(String petId, PetData petData, Callback<Void> callback);
 
     LiveData<Result<Void>> delete(String petId);
 
     LiveData<Result<Pet>> get(String petId);
 
-    void get(String petId, GetCallback callback);
+    void get(String petId, Callback<Pet> callback);
 
     LiveData<Result<List<Pet>>> getPets();
 
-    interface UpdateCallback {
-        void onUpdated();
-    }
+    void getPets(Callback<List<Pet>> result);
 
-    interface GetCallback {
-        void onGet(Pet pet);
+    interface Callback<T> {
+        void onResult(Result<T> result);
     }
 }
 

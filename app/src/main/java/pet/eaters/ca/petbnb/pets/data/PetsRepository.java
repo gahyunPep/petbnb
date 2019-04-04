@@ -1,7 +1,5 @@
 package pet.eaters.ca.petbnb.pets.data;
 
-import android.content.Intent;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -54,13 +52,8 @@ public class PetsRepository implements IPetsRepository {
     }
 
     @Override
-    public void update(String petId, PetData petData, final UpdateCallback callback) {
-        pets.document(petId).set(petData).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                callback.onUpdated();
-            }
-        });
+    public void update(String petId, PetData petData, final Callback<Void> callback) {
+        executeTask(pets.document(petId).set(petData), callback);
     }
 
     @Override
@@ -74,18 +67,18 @@ public class PetsRepository implements IPetsRepository {
     }
 
     @Override
-    public void get(String petId, final GetCallback callback) {
-        pets.document(petId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                callback.onGet(petMapper().map(documentSnapshot));
-            }
-        });
+    public void get(String petId, Callback<Pet> callback) {
+        executeTask(pets.document(petId).get(), petMapper(), callback);
     }
 
     @Override
     public LiveData<Result<List<Pet>>> getPets() {
         return executeTask(pets.get(), petListMapper());
+    }
+
+    @Override
+    public void getPets(Callback<List<Pet>> callback) {
+        executeTask(pets.get(), petListMapper(), callback);
     }
 
     private interface Mapper<F, T> {
@@ -135,8 +128,35 @@ public class PetsRepository implements IPetsRepository {
         return result;
     }
 
+    private <F, T> void executeTask(Task<F> task, Mapper<F, T> mapper, Callback<T> callback) {
+        task.addOnSuccessListener(successListener(callback, mapper))
+                .addOnFailureListener(failureListener(callback));
+    }
+
+    private <T> void executeTask(Task<T> task, Callback<T> callback) {
+        executeTask(task, this.<T>transparentMapper(), callback);
+    }
+
     private <T> LiveData<Result<T>> executeTask(Task<T> task) {
         return executeTask(task, this.<T>transparentMapper());
+    }
+
+    private <F, T> OnSuccessListener<F> successListener(final Callback<T> callback, final Mapper<F, T> mapper) {
+        return new OnSuccessListener<F>() {
+            @Override
+            public void onSuccess(F o) {
+                callback.onResult(Result.success(mapper.map(o)));
+            }
+        };
+    }
+
+    private <T> OnFailureListener failureListener(final Callback<T> callback) {
+        return new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                callback.onResult(Result.<T>failed(e));
+            }
+        };
     }
 
     private <F, T> OnSuccessListener<F> successListener(final MutableLiveData<Result<T>> result, final Mapper<F, T> mapper) {

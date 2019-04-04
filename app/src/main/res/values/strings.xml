@@ -19,9 +19,6 @@
     <string name="ImageDes">Avatar</string>
 
     <string name="QRDescription">QR Image Code</string>
-    <string name="cancelScan">Cancelled</string>
-    <string name="scan">Scanned:</string>
-    <string name="scanCodeDescription">Scan a QR Code</string>
 
     <string name="str_name">Name</string>
     <string name="str_age">Age</string>
@@ -49,6 +46,9 @@
     <string name="str_ownerZipcodeError">Please enter your zip code</string>
     <string name="str_ownerEmailError">Please enter your valid email address</string>
     <string name="str_ownerPhoneError">Please enter your valid phone numbers with (+country code)</string>
+    <string name="scanCodeDescription">Scan a QR Code</string>
+    <string name="cancelScan">Cancel Scan</string>
+    <string name="scan">Scan</string>
     <string name="str_otherTypePet">Other Type Pet</string>
     <string name="dog">Dog</string>
     <string name="cat">Cat</string>
@@ -57,6 +57,7 @@
     <string name="female">Female</string>
     <string name="male">Male</string>
     <string name="yeas_old_fmt">%d years old</string>
+    <string name="retry">retry</string>
 
 
     <string-array name="petType_arr">

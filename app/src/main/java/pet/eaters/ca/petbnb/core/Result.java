@@ -27,4 +27,8 @@ public class Result<T> {
     public Exception getException() {
         return exception;
     }
+
+    public boolean isSuccess() {
+        return data != null;
+    }
 }

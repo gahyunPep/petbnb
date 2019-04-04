@@ -1,24 +1,34 @@
 package pet.eaters.ca.petbnb.pets.ui.details;
 
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.android.material.tabs.TabLayout;
-import java.util.List;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
-import pet.eaters.ca.petbnb.core.QRCodeGenAndReader;
 import pet.eaters.ca.petbnb.R;
+import pet.eaters.ca.petbnb.core.android.FragmentUtils;
 import pet.eaters.ca.petbnb.core.Result;
+import pet.eaters.ca.petbnb.core.ui.EventObserver;
 import pet.eaters.ca.petbnb.pets.data.Pet;
-import pet.eaters.ca.petbnb.pets.data.PetsRepository;
+
+import static pet.eaters.ca.petbnb.pets.ui.details.PetDetailsViewModel.*;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,21 +36,15 @@ import pet.eaters.ca.petbnb.pets.data.PetsRepository;
 public class PetDetailsFragment extends Fragment {
     private static String PET_ID = "PET_ID";
 
+    private PetDetailsViewModel viewModel;
+
     private ViewPager viewPager;
-    private ViewPagerAdapter viewPagerAdapter;
-    private TabLayout imageSlideIndicator;
-    List<String > petImages;
     private TextView petNameAge;
     private TextView petInfo;
     private TextView petSizeType;
-    private TextView petPhone;
     private TextView petCity;
-    private ImageView petGender;
-    LiveData<Result<Pet>> pet;
-    private Integer genderData;
-    private String petSize;
-    private Integer petSizeData;
-    private ImageView QRCodeImg;
+    private ImageView qrCodeImg;
+    private Toolbar toolbar;
 
 
     public static PetDetailsFragment newInstance(String petId) {
@@ -52,76 +56,182 @@ public class PetDetailsFragment extends Fragment {
         return fragment;
     }
 
-    public PetDetailsFragment() { }
+    public PetDetailsFragment() {
+    }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView =  inflater.inflate(R.layout.fragment_pet_details, container, false);
-        viewPager = rootView.findViewById(R.id.viewPager);
+        return inflater.inflate(R.layout.fragment_pet_details, container, false);
+    }
 
-        assert getArguments() != null;
-        String petId = getArguments().getString(PET_ID);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        viewPager = view.findViewById(R.id.viewPager);
+        petNameAge = view.findViewById(R.id.pet_name_age);
+        petInfo = view.findViewById(R.id.pet_info);
+        petSizeType = view.findViewById(R.id.pet_size_type);
+        petCity = view.findViewById(R.id.pet_city);
+        qrCodeImg = view.findViewById(R.id.QRImageView);
 
-        petNameAge = rootView.findViewById(R.id.pet_name_age);
-        petInfo = rootView.findViewById(R.id.pet_info);
-        petSizeType = rootView.findViewById(R.id.pet_size_type);
-        petPhone = rootView.findViewById(R.id.pet_phone);
-        petCity = rootView.findViewById(R.id.pet_city);
-        petGender = rootView.findViewById(R.id.pet_gender);
-        QRCodeImg = rootView.findViewById(R.id.QRImageView);
-
-        imageSlideIndicator = rootView.findViewById(R.id.image_slide_indicator);
-        imageSlideIndicator.setupWithViewPager(viewPager, true);
-        PetsRepository repository = new PetsRepository();
-        pet = repository.get(petId);
-        pet.observe(getViewLifecycleOwner(), new Observer<Result<Pet>>() {
+        toolbar = view.findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(Result<Pet> petResult) {
-                Pet petData = petResult.getData();
-                petSizeData = petData.getSize();
-                switch (petSizeData) {
-                    case 1:
-                        petSize = "Big";
-                        break;
-                    case 2:
-                        petSize = "Medium";
-                        break;
-                    case 3:
-                        petSize = "Small";
-                        break;
-                }
-                petNameAge.setText(petData.getName() + " , " + petData.getAge());
-                petInfo.setText(petData.getInfo());
-                petSizeType.setText(petSize + " " + petData.getType());
-                petPhone.setText(petData.getPhone());
-                petCity.setText(petData.getAddress());
-                genderData = petData.getGender();
-
-
-                if(genderData == 0) {
-                    petGender.setImageResource(R.drawable.ic_female);
-                }
-                else if(genderData == 1) {
-                    petGender.setImageResource(R.drawable.ic_male);
-                }
-
-                petImages = petData.getImages();
-
-
-                viewPagerAdapter = new ViewPagerAdapter(petImages, getContext());
-                viewPager.setAdapter(viewPagerAdapter);
+            public void onClick(View v) {
+                goBack();
             }
         });
 
-        //TDO make async and replace with size from view
-        Bitmap qrCode = new QRCodeGenAndReader().generateQRCode(petId, 320, 320);
-        if (qrCode != null) {
-            QRCodeImg.setImageBitmap(qrCode);
+        view.findViewById(R.id.callFab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewModel.onCallClicked();
+            }
+        });
+        view.findViewById(R.id.messageFab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewModel.onMessageClicked();
+            }
+        });
+
+        view.<TabLayout>findViewById(R.id.image_slide_indicator).setupWithViewPager(viewPager, true);
+
+        viewModel = ViewModelProviders.of(this, new Factory(getPetId())).get(PetDetailsViewModel.class);
+        observePet();
+        observeQrCode();
+        observePhoneCall();
+        observeMessage();
+
+    }
+
+    private void observeMessage() {
+        viewModel.getMessageSend().observe(getViewLifecycleOwner(), new EventObserver<Message>() {
+            @Override
+            public void onEventHappened(Message message) {
+                sendMessage(message);
+            }
+        });
+    }
+
+    private void observePhoneCall() {
+        viewModel.getPhoneCall().observe(getViewLifecycleOwner(), new EventObserver<String>() {
+            @Override
+            public void onEventHappened(String value) {
+                makeCall(value);
+            }
+        });
+    }
+
+    private void sendMessage(Message message) {
+        if (!canSendToWhatsApp(message)) {
+            sendSms(message);
+        }
+    }
+
+    private void sendSms(Message message) {
+        Intent smsIntent = new Intent(Intent.ACTION_SENDTO);
+        smsIntent.setData(Uri.parse("smsto:" + message.phone));
+        smsIntent.putExtra("sms_body", message.message);
+        startActivity(smsIntent);
+    }
+
+    private boolean canSendToWhatsApp(Message message) {
+        Uri uri = Uri.parse("https://api.whatsapp.com/send").buildUpon()
+                .appendQueryParameter("text", message.message)
+                .appendQueryParameter("phone", message.phone)
+                .build();
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+            return true;
         }
 
-        return rootView;
+        return false;
+    }
+
+    private void makeCall(String value) {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse(value));
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    private void observePet() {
+        viewModel.getPet().observe(getViewLifecycleOwner(), new Observer<Result<Pet>>() {
+            @Override
+            public void onChanged(Result<Pet> result) {
+                if (result.isSuccess()) {
+                    showPet(result.getData());
+                } else {
+                    showError(result.getException());
+                }
+            }
+        });
+
+    }
+
+    private void observeQrCode() {
+        viewModel.getQrCode(gerQrCodeSize()).observe(getViewLifecycleOwner(), new Observer<Bitmap>() {
+            @Override
+            public void onChanged(Bitmap bitmap) {
+                if (bitmap == null) return;
+
+                qrCodeImg.setImageBitmap(bitmap);
+            }
+        });
+    }
+
+    private String getPetId() {
+        assert getArguments() != null;
+        return getArguments().getString(PET_ID);
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void showPet(Pet pet) {
+        toolbar.setTitle(pet.getName());
+
+
+        petNameAge.setText(String.format("%s, %d", pet.getName(), pet.getAge()));
+        petNameAge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, getGenderIcon(pet.getGender()), 0);
+
+
+        petInfo.setText(pet.getInfo());
+        petSizeType.setText(String.format("%s %s", petSizeToString(pet.getSize()), pet.getType()));
+        petCity.setText(pet.getAddress());
+
+        viewPager.setAdapter(new ViewPagerAdapter(pet.getImages()));
+    }
+
+    private void showError(Exception exception) {
+        FragmentUtils.showError(this, exception);
+    }
+
+    private void goBack() {
+        assert getFragmentManager() != null;
+        getFragmentManager().beginTransaction().remove(this).commit();
+    }
+
+    private String petSizeToString(int size) {
+        String[] sizes = getResources().getStringArray(R.array.petSize_arr);
+        int index = Math.min(Math.max(0, size), sizes.length - 1);
+        return sizes[index];
+    }
+
+    @DrawableRes
+    private int getGenderIcon(int gender) {
+        if (gender == 1) {
+            return R.drawable.ic_male;
+        }
+
+        return R.drawable.ic_female;
+    }
+
+    private int gerQrCodeSize() {
+        return getResources().getDimensionPixelOffset(R.dimen.qr_code_size);
     }
 }

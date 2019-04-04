@@ -14,6 +14,7 @@ import java.util.List;
 
 import androidx.lifecycle.LiveData;
 import pet.eaters.ca.petbnb.R;
+import pet.eaters.ca.petbnb.core.Result;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -50,13 +51,15 @@ public class ImgUplaodIntentService extends IntentService {
         photoStorage.uploadFiles(petImages, petId, new PhotoStorage.Callback() {
             @Override
             public void onUploadFinish(final List<String> result) {
-                repository.get(petId, new IPetsRepository.GetCallback() {
+                repository.get(petId, new IPetsRepository.Callback<Pet>() {
                     @Override
-                    public void onGet(Pet pet) {
+                    public void onResult(Result<Pet> petResult) {
+                        if (!petResult.isSuccess()) return;
+                        Pet pet = petResult.getData();
                         pet.setImages(result);
-                        repository.update(pet.getId(), pet.getData(), new IPetsRepository.UpdateCallback() {
+                        repository.update(pet.getId(), pet.getData(), new IPetsRepository.Callback<Void>() {
                             @Override
-                            public void onUpdated() {
+                            public void onResult(Result<Void> result) {
                                 sendNotification("Photo upload has been completed!");
                             }
                         });
@@ -67,7 +70,7 @@ public class ImgUplaodIntentService extends IntentService {
             @Override
             public void onPhotoUploaded(int size, int left) {
                 int uploaded = size-left;
-                String message = uploaded+"/"+size+"photo(s) has been uploaded";
+                String message = uploaded+"/"+size+"photo(s) have been uploaded";
             }
         });
     }

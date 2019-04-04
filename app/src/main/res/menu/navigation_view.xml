@@ -6,10 +6,6 @@
             android:icon="@drawable/ic_login_nav"
             android:title="@string/login" />
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_home_nav"
-            android:title="@string/home" />
-        <item
             android:id="@+id/nav_create_post"
             android:icon="@drawable/ic_create_nav"
             android:title="@string/create_post" />
