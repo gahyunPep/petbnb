@@ -149,6 +149,7 @@ public class MapFragment extends NavigationFragment implements OnMapReadyCallbac
 
         if (mViewModel.isNeedToAskPermission()) {
             if (checkPermission()) {
+                goToCurrentLocation();
                 setMyLocationEnabled();
             }
         } else {
@@ -285,10 +286,8 @@ public class MapFragment extends NavigationFragment implements OnMapReadyCallbac
     }
 
     private void openPetDetails(Pet petInfo) {
-        Fragment petDetailsFragment = PetDetailsFragment.newInstance(petInfo.getId());
-
         getFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, petDetailsFragment)
+                .add(R.id.content_frame, PetDetailsFragment.newInstance(petInfo.getId()))
                 .addToBackStack(null)
                 .commit();
     }

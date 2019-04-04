@@ -12,7 +12,7 @@ import pet.eaters.ca.petbnb.pets.data.Pet;
 import pet.eaters.ca.petbnb.pets.data.PetsRepository;
 
 public class PetsListViewModel extends ViewModel  {
-    private PetsRepository repository = PetBnbApplication.repositorySingleton.getRepository();
+    private PetsRepository repository = PetBnbApplication.petsRepository;
 
     private MutableLiveData<Result<List<Pet>>> pets = new MutableLiveData<>();
     private MutableLiveData<Boolean> loading = new MutableLiveData<>();

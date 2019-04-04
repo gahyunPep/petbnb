@@ -39,7 +39,6 @@ import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.ScanRecord;
 import pet.eaters.ca.petbnb.pets.data.ScanRepository;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
-import pet.eaters.ca.petbnb.pets.ui.maps.MapFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,

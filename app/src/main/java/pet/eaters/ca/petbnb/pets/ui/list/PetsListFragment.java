@@ -117,7 +117,7 @@ public class PetsListFragment extends NavigationFragment implements PetsListAdap
             return;
         }
         getFragmentManager().beginTransaction()
-                .replace(R.id.content_frame, PetDetailsFragment.newInstance(item.getId()))
+                .add(R.id.content_frame, PetDetailsFragment.newInstance(item.getId()))
                 .addToBackStack(null)
                 .commit();
     }
