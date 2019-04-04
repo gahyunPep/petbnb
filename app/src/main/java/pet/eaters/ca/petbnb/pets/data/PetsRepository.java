@@ -54,6 +54,16 @@ public class PetsRepository implements IPetsRepository {
     }
 
     @Override
+    public void update(String petId, PetData petData, final UpdateCallback callback) {
+        pets.document(petId).set(petData).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                callback.onUpdated();
+            }
+        });
+    }
+
+    @Override
     public LiveData<Result<Void>> delete(String petId) {
         return executeTask(pets.document(petId).delete());
     }
@@ -61,6 +71,16 @@ public class PetsRepository implements IPetsRepository {
     @Override
     public LiveData<Result<Pet>> get(String petId) {
         return executeTask(pets.document(petId).get(), petMapper());
+    }
+
+    @Override
+    public void get(String petId, final GetCallback callback) {
+        pets.document(petId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                callback.onGet(petMapper().map(documentSnapshot));
+            }
+        });
     }
 
     @Override

@@ -1,19 +1,24 @@
 package pet.eaters.ca.petbnb.pets.data;
 
+import android.annotation.TargetApi;
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.Context;
+import android.os.Build;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
+import pet.eaters.ca.petbnb.R;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
 public class ImgUplaodIntentService extends IntentService {
@@ -21,29 +26,74 @@ public class ImgUplaodIntentService extends IntentService {
     private final String PET_ID_KEY = "petID";
     private final String PET_IMG_KEY = "petImgs";
 
+    private NotificationManager notifier = null;
+    private static final String NOTIFICATION_CHANNEL_ID = "photo_upload_channel";
+    private static final int PHOTO_UPLOAD_NOTIFY = 0x1001;
+
     public ImgUplaodIntentService() {
         super("ImgUplaodIntentService");
+        notifier = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        createChannel();
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String petId;
-        List<String> petImages = new ArrayList<String>();
-        PhotoStorage photoStorage = new PhotoStorage();
-        if (intent != null) {
-            petId = intent.getStringExtra(PET_ID_KEY);
-            petImages = intent.getStringArrayListExtra(PET_IMG_KEY);
-            // post imges to firebase useing petid and petImages
-            // get imges url
-            LiveData<List<String>> imgFiles = photoStorage.uploadFiles(petImages, petId);
-//            imgFiles.observe(new Observer() {
-//                @Override
-//                public void update(Observable o, Object arg) {
-//
-//                }
-//            });
-            // post the imges under specific pet
+        if (intent == null) {
+            return;
         }
+
+
+        final String petId = intent.getStringExtra(PET_ID_KEY);
+        List<String> petImages = intent.getStringArrayListExtra(PET_IMG_KEY);
+        PhotoStorage photoStorage = new PhotoStorage();
+        final PetsRepository repository = new PetsRepository();
+        photoStorage.uploadFiles(petImages, petId, new PhotoStorage.Callback() {
+            @Override
+            public void onUploadFinish(final List<String> result) {
+                repository.get(petId, new IPetsRepository.GetCallback() {
+                    @Override
+                    public void onGet(Pet pet) {
+                        pet.setImages(result);
+                        repository.update(pet.getId(), pet.getData(), new IPetsRepository.UpdateCallback() {
+                            @Override
+                            public void onUpdated() {
+                                sendNotification("Photo upload has been completed!");
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onPhotoUploaded(int size, int left) {
+                int uploaded = size-left;
+                String message = uploaded+"/"+size+"photo(s) has been uploaded";
+            }
+        });
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void sendNotification(String contentTxt) {
+        Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID);
+        notificationBuilder.setTicker("This is ticker");
+        notificationBuilder.setSmallIcon(R.drawable.ic_action_name);
+        notificationBuilder.setContentTitle("PetBnB photo upload");
+        notificationBuilder.setContentText(contentTxt);
+        notificationBuilder.setAutoCancel(true);
+
+        Notification notification = notificationBuilder.build();
+        notifier.notify(PHOTO_UPLOAD_NOTIFY, notification);
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createChannel() {
+        NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID
+                , "Photo Upload Notification", NotificationManager.IMPORTANCE_DEFAULT);
+        notificationChannel.setDescription("PetBnB Photo Upload Channel");
+        notificationChannel.enableLights(true);
+        notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 100});
+        notificationChannel.enableVibration(true);
+        notifier.createNotificationChannel(notificationChannel); // this ables notification messages
     }
 
 }

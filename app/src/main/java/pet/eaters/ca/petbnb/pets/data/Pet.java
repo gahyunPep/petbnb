@@ -16,6 +16,10 @@ public class Pet {
         this.data = petData;
     }
 
+    public PetData getData() {
+        return data;
+    }
+
     public String getId() {
         return id;
     }
