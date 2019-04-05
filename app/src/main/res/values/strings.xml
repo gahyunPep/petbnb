@@ -58,6 +58,7 @@
     <string name="male">Male</string>
     <string name="yeas_old_fmt">%d years old</string>
     <string name="retry">retry</string>
+    <string name="uploaded_msg">Photo upload has been completed!</string>
 
 
     <string-array name="petType_arr">

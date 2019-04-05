@@ -27,14 +27,21 @@ public class ImgUplaodIntentService extends IntentService {
     private final String PET_ID_KEY = "petID";
     private final String PET_IMG_KEY = "petImgs";
 
-    private NotificationManager notifier = null;
+    private NotificationManager notifier;
     private static final String NOTIFICATION_CHANNEL_ID = "photo_upload_channel";
+    private static final String NOTIFICATION_CHANNEL2_ID = "photo_uploaded_channel" ;
     private static final int PHOTO_UPLOAD_NOTIFY = 0x1001;
 
     public ImgUplaodIntentService() {
         super("ImgUplaodIntentService");
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
         notifier = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        createChannel();
+        createChannel(NOTIFICATION_CHANNEL_ID, false);
+        createChannel(NOTIFICATION_CHANNEL2_ID, true);
     }
 
     @Override
@@ -60,7 +67,8 @@ public class ImgUplaodIntentService extends IntentService {
                         repository.update(pet.getId(), pet.getData(), new IPetsRepository.Callback<Void>() {
                             @Override
                             public void onResult(Result<Void> result) {
-                                sendNotification("Photo upload has been completed!");
+                                notifier.cancel(PHOTO_UPLOAD_NOTIFY);
+                                sendNotification(getString(R.string.uploaded_msg), NOTIFICATION_CHANNEL2_ID);
                             }
                         });
                     }
@@ -71,13 +79,14 @@ public class ImgUplaodIntentService extends IntentService {
             public void onPhotoUploaded(int size, int left) {
                 int uploaded = size-left;
                 String message = uploaded+"/"+size+"photo(s) have been uploaded";
+                sendNotification(message, NOTIFICATION_CHANNEL_ID);
             }
         });
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    private void sendNotification(String contentTxt) {
-        Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID);
+    private void sendNotification(String contentTxt, String notificationChannelId) {
+        Notification.Builder notificationBuilder = new Notification.Builder(getApplicationContext(), notificationChannelId);
         notificationBuilder.setTicker("This is ticker");
         notificationBuilder.setSmallIcon(R.drawable.ic_action_name);
         notificationBuilder.setContentTitle("PetBnB photo upload");
@@ -89,13 +98,15 @@ public class ImgUplaodIntentService extends IntentService {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    private void createChannel() {
-        NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID
+    private void createChannel(String notificationChannelId, boolean needVibration) {
+        NotificationChannel notificationChannel = new NotificationChannel(notificationChannelId
                 , "Photo Upload Notification", NotificationManager.IMPORTANCE_DEFAULT);
         notificationChannel.setDescription("PetBnB Photo Upload Channel");
-        notificationChannel.enableLights(true);
-        notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 100});
-        notificationChannel.enableVibration(true);
+        notificationChannel.enableVibration(false);
+        if(needVibration){
+            notificationChannel.enableLights(true);
+            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 100});
+        }
         notifier.createNotificationChannel(notificationChannel); // this ables notification messages
     }
 
