@@ -238,7 +238,7 @@ public class PhotoUploadFragment extends Fragment {
     public void generatePetData(PetForm petForm, PetOwnerForm petOwnerForm, List<String> images) {
         String petName = petForm.petName;
         int petGender = petForm.petGender;
-        int petType = petForm.petType;
+        String petType = petForm.petType + "";
         int petAge = petForm.petAge;
         int petSize = petForm.petSize;
         String petDesc = petForm.petDesc;
@@ -256,7 +256,7 @@ public class PhotoUploadFragment extends Fragment {
         double longitude = geoAddress.second;
         String ownerId = ""; //TODO temp ownerID
 
-        PetData petData = new PetData(petName, petDesc, "1", petSize, petImages, ownerPhone,
+        PetData petData = new PetData(petName, petDesc, petType, petSize, petImages, ownerPhone,
                 ownerAddress, ownerZipCode, latitude, longitude, petAge, petGender, ownerId);
         populatePetData(petData);
     }
