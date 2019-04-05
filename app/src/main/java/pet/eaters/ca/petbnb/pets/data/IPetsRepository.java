@@ -5,7 +5,7 @@ import java.util.List;
 import androidx.lifecycle.LiveData;
 import pet.eaters.ca.petbnb.core.Result;
 
-public interface IPetsRepository {
+public interface IPetsRepository extends GenericRepository {
     LiveData<Result<Void>> post(PetData pet);
 
     LiveData<Result<Void>> update(String petId, PetData petData);
@@ -17,8 +17,6 @@ public interface IPetsRepository {
     LiveData<Result<List<Pet>>> getPets();
 
     void getPets(Callback<List<Pet>> result);
-
-    interface Callback<T> {
-        void onResult(Result<T> result);
-    }
 }
+
+

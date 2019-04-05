@@ -40,8 +40,8 @@ public class ScanRecord {
         this.timestamps = timestamps;
     }
 
-    public List<Long> addTimestamps(Long time) {
-        this.timestamps.add(time);
-        return timestamps;
+    public ScanRecord addTimestamps(Long time) {
+        timestamps.add(time);
+        return this;
     }
 }

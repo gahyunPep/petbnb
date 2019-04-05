@@ -58,6 +58,12 @@
     <string name="male">Male</string>
     <string name="yeas_old_fmt">%d years old</string>
     <string name="retry">retry</string>
+    <string name="signed_out">User signed out</string>
+    <string name="login_failed">Failed to log in with your account</string>
+    <string name="login_success">Successfully signed in</string>
+    <string name="login_before_scan">Please login before you can scan the pet</string>
+    <string name="pet_sitting">Pet sitting</string>
+    <string name="yay">Yay!</string>
 
 
     <string-array name="petType_arr">

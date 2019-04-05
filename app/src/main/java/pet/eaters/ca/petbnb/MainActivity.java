@@ -1,5 +1,6 @@
 package pet.eaters.ca.petbnb;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,18 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,29 +26,82 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import de.hdodenhof.circleimageview.CircleImageView;
 import pet.eaters.ca.petbnb.core.android.NavigationFragment;
-import pet.eaters.ca.petbnb.core.Result;
-import pet.eaters.ca.petbnb.pets.data.ScanRecord;
-import pet.eaters.ca.petbnb.pets.data.ScanRepository;
+import pet.eaters.ca.petbnb.core.ui.EventObserver;
+import pet.eaters.ca.petbnb.pets.ui.QrCodeClickedListener;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
 import pet.eaters.ca.petbnb.pets.ui.postform.PetPostFormActivity;
 
+import static pet.eaters.ca.petbnb.MainActivityViewModel.RC_SIGN_IN;
+import static pet.eaters.ca.petbnb.MainActivityViewModel.RC_SIGN_IN_AND_SCAN;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        NavigationFragment.NavigationActivity {
+        NavigationFragment.NavigationActivity, QrCodeClickedListener {
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
     private TextView textUserName;
     private CircleImageView avatar;
-    private static final int RC_SIGN_IN = 9001;
-    private ScanRepository scanRepository;
-    private boolean clickOnScan = false;
+
+    private MainActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         showHomeFragment();
+
+        observeUser();
+        observeMessage();
+        observeAlert();
+    }
+
+    private void observeAlert() {
+        viewModel.getAlert().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String message) {
+                if (message == null) return;
+                showAlert(message);
+            }
+        });
+    }
+
+    private void observeMessage() {
+        viewModel.getMessage().observe(this, new EventObserver<Integer>() {
+            @Override
+            public void onEventHappened(Integer value) {
+                showMessage(value);
+            }
+        });
+    }
+
+    private void observeUser() {
+        viewModel.getUser().observe(this, new Observer<FirebaseUser>() {
+            @Override
+            public void onChanged(FirebaseUser user) {
+                showUser(user);
+            }
+        });
+    }
+
+    private void showAlert(String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.pet_sitting)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.yay), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        viewModel.dismissDialog();
+                    }
+                })
+                .show();
+    }
+
+    private void showMessage(Integer value) {
+        Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
     }
 
     private void showHomeFragment() {
@@ -132,64 +178,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .into(avatar);
     }
 
-
-    private void logout() {
-        AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                showUser(user);
-                if (user == null) {
-                    Toast.makeText(getApplicationContext(), "User signed out", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void login() {
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(Arrays.asList(
-                                new AuthUI.IdpConfig.EmailBuilder().build(),
-                                new AuthUI.IdpConfig.FacebookBuilder().build(),
-                                new AuthUI.IdpConfig.GoogleBuilder().build()
-                        ))
-                        .setLogo(R.drawable.logo)      // Set logo drawable
-                        .setTheme(R.style.AppTheme)      // Set theme
-                        .build(),
-                RC_SIGN_IN);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                // Successfully signed in
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if (user != null) {
-                    showUser(user);
-                    Toast.makeText(this, "Successfully signed in", Toast.LENGTH_SHORT).show();
-                    if (clickOnScan) {
-                        startScanner();
-                    }
+        switch (requestCode) {
+            case RC_SIGN_IN:
+            case RC_SIGN_IN_AND_SCAN:
+                viewModel.loginResult(this, requestCode, resultCode);
+                break;
+            case IntentIntegrator.REQUEST_CODE:
+                IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+                if (result == null) {
+                    return;
                 }
-            } else {
-                Toast.makeText(this, "Failed to log in with your account", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == IntentIntegrator.REQUEST_CODE) {
-            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-            if (result == null) {
-                return;
-            }
-            String petId = result.getContents();
-            if (petId == null) {
-                return;
-            }
+                String petId = result.getContents();
+                if (petId == null) {
+                    return;
+                }
 
-            petIdScanned(petId);
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+                viewModel.petIdScanned(petId);
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -199,90 +208,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawerLayout.closeDrawers();
         switch (menuItem.getItemId()) {
             case R.id.nav_logout:
-                logout();
+                viewModel.logout(this);
                 break;
             case R.id.nav_login:
-                login();
-                break;
-            case R.id.nav_qrcode:
-                clickOnScan = true;
-                startScanner();
+                viewModel.login(this, RC_SIGN_IN);
                 break;
             case R.id.nav_create_post:
                 startActivity(new Intent(this, PetPostFormActivity.class));
                 break;
         }
         return true;
-    }
-
-    private void startScanner() {
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            login();
-            return;
-        }
-
-        IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-        integrator.setPrompt(getString(R.string.scanCodeDescription));
-        integrator.setCameraId(0);
-        integrator.setBeepEnabled(true);
-        integrator.setBarcodeImageEnabled(true);
-        integrator.initiateScan();
-    }
-
-    private void petIdScanned(final String petId) {
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "Please login before you can scan the pet", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        final String uid = user.getUid();
-        final String scanId = uid + "+" + petId;
-
-        scanRepository = new ScanRepository();
-
-        scanRepository.get(scanId).observe(this, new Observer<Result<ScanRecord>>() {
-            @Override
-            public void onChanged(Result<ScanRecord> scanRecordResult) {
-                ScanRecord scanRecord = scanRecordResult.getData();
-                if (scanRecord != null) {
-                    if (scanRecord.getTimestamps().size() % 2 == 0) {
-                        scanRepository.update(scanId, new ScanRecord(scanRecord.getPetID(),
-                                scanRecord.getUserID(), scanRecord.addTimestamps(getCurrentTime())));
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
-                        alertDialogBuilder.setMessage("Start time is set!");
-                        alertDialogBuilder.show();
-                    } else {
-                        scanRepository.update(scanId, new ScanRecord(scanRecord.getPetID(),
-                                scanRecord.getUserID(), scanRecord.addTimestamps(getCurrentTime())));
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
-                        int price = calculatePayment(scanRecord.getTimestamps().get(scanRecord.getTimestamps().size() - 1),
-                                scanRecord.getTimestamps().get(scanRecord.getTimestamps().size() - 2));
-                        alertDialogBuilder.setMessage("You will have to pay: $" + Integer.toString(price));
-                        alertDialogBuilder.show();
-                    }
-                } else {
-                    List<Long> timestamps = new ArrayList<>();
-                    timestamps.add(getCurrentTime());
-                    scanRepository.update(scanId, new ScanRecord(petId,
-                            uid, timestamps));
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.MyAlertDialogStyle);
-                    alertDialogBuilder.setMessage("Start time is set!");
-                    alertDialogBuilder.show();
-                }
-            }
-        });
-    }
-
-    public long getCurrentTime() {
-        return System.currentTimeMillis();
-    }
-
-    public int calculatePayment(long timeCheckOut, long timeCheckIn) {
-        long hour = (timeCheckOut - timeCheckIn) / (60 * 60 * 1000);
-        return (int) hour * 2;
     }
 
     //https://codinginflow.com/tutorials/android/navigation-drawer/part-2-layouts
@@ -301,6 +236,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         textUserName = navigationView.getHeaderView(0).findViewById(R.id.txtViewUser);
         avatar = navigationView.getHeaderView(0).findViewById(R.id.avatar);
-        showUser(FirebaseAuth.getInstance().getCurrentUser());
+    }
+
+    @Override
+    public void onScanQrCodeClicked() {
+        viewModel.startScanner(this, RC_SIGN_IN_AND_SCAN);
     }
 }

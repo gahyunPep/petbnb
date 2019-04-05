@@ -195,10 +195,8 @@ public class PetDetailsFragment extends Fragment {
     private void showPet(Pet pet) {
         toolbar.setTitle(pet.getName());
 
-
         petNameAge.setText(String.format("%s, %d", pet.getName(), pet.getAge()));
         petNameAge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, getGenderIcon(pet.getGender()), 0);
-
 
         petInfo.setText(pet.getInfo());
         petSizeType.setText(String.format("%s %s", petSizeToString(pet.getSize()), pet.getType()));
