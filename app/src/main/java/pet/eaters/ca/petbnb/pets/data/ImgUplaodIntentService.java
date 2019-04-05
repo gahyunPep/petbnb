@@ -78,7 +78,7 @@ public class ImgUplaodIntentService extends IntentService {
             @Override
             public void onPhotoUploaded(int size, int left) {
                 int uploaded = size-left;
-                String message = uploaded+"/"+size+"photo(s) have been uploaded";
+                String message = getResources().getQuantityString(R.plurals.photo, uploaded, uploaded, size);;
                 sendNotification(message, NOTIFICATION_CHANNEL_ID);
             }
         });

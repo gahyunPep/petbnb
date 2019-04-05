@@ -1,5 +1,6 @@
 package pet.eaters.ca.petbnb.pets.ui.list;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import pet.eaters.ca.petbnb.core.android.FragmentUtils;
 import pet.eaters.ca.petbnb.core.android.NavigationFragment;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
+import pet.eaters.ca.petbnb.pets.ui.QrCodeClickedListener;
 import pet.eaters.ca.petbnb.pets.ui.details.PetDetailsFragment;
 import pet.eaters.ca.petbnb.pets.ui.maps.MapFragment;
 
@@ -30,6 +32,7 @@ public class PetsListFragment extends NavigationFragment implements PetsListAdap
     private RecyclerView petsRecyclerView;
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private QrCodeClickedListener qrCodeClickedListener;
 
     public static PetsListFragment newInstance() {
         return new PetsListFragment();
@@ -68,6 +71,16 @@ public class PetsListFragment extends NavigationFragment implements PetsListAdap
                 return false;
             }
         });
+
+        view.findViewById(R.id.qrCodeFab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (qrCodeClickedListener == null) {
+                    return;
+                }
+                qrCodeClickedListener.onScanQrCodeClicked();
+            }
+        });
     }
 
     @Override
@@ -95,6 +108,15 @@ public class PetsListFragment extends NavigationFragment implements PetsListAdap
                 progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             }
         });
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        if (context instanceof QrCodeClickedListener) {
+            qrCodeClickedListener = (QrCodeClickedListener) context;
+        }
+
+        super.onAttach(context);
     }
 
     private void showList(List<Pet> data, PetsListAdapter adapter) {

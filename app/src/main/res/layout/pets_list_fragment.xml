@@ -31,14 +31,13 @@
         app:layout_constraintStart_toStartOf="@+id/swipeContainer" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/qrCodeFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         app:layout_anchor="@id/swipeContainer"
         app:layout_anchorGravity="bottom|right"
-        android:src="@drawable/qrcodeicon"
-        android:tint="@android:color/white"/>
+        android:src="@drawable/qrcodeicon"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

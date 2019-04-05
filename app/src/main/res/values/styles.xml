@@ -6,9 +6,16 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="floatingActionButtonStyle">@style/FabStyle</item>
+        <item name="materialButtonStyle">@style/ButtonStyle</item>
     </style>
-    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:textColorPrimary">#FFFFFF</item>
-        <item name="android:background">@color/colorPrimary</item>
+
+    <style name="FabStyle" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="tint">@color/colorOnSecondary</item>
     </style>
+
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/colorOnSecondary</item>
+    </style>
+
 </resources>

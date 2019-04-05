@@ -37,6 +37,7 @@ import pet.eaters.ca.petbnb.core.android.FragmentUtils;
 import pet.eaters.ca.petbnb.core.android.NavigationFragment;
 import pet.eaters.ca.petbnb.core.Result;
 import pet.eaters.ca.petbnb.pets.data.Pet;
+import pet.eaters.ca.petbnb.pets.ui.QrCodeClickedListener;
 import pet.eaters.ca.petbnb.pets.ui.details.PetDetailsFragment;
 import pet.eaters.ca.petbnb.pets.ui.list.PetsListFragment;
 
@@ -50,6 +51,7 @@ public class MapFragment extends NavigationFragment implements OnMapReadyCallbac
     private GoogleMap mMap;
     private LocationManager mLocationManager;
     private View mMyLocationButton;
+    private QrCodeClickedListener qrCodeClickedListener;
 
 
     private LocationListener mLocationListener = new LocationListener() {
@@ -103,6 +105,16 @@ public class MapFragment extends NavigationFragment implements OnMapReadyCallbac
                 return false;
             }
         });
+
+        view.findViewById(R.id.qrCodeFab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (qrCodeClickedListener == null) {
+                    return;
+                }
+                qrCodeClickedListener.onScanQrCodeClicked();
+            }
+        });
     }
 
     @Override
@@ -122,6 +134,15 @@ public class MapFragment extends NavigationFragment implements OnMapReadyCallbac
                 goToCurrentLocation();
             }
         });
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        if (context instanceof QrCodeClickedListener) {
+            qrCodeClickedListener = (QrCodeClickedListener) context;
+        }
+
+        super.onAttach(context);
     }
 
     private void goToCurrentLocation() {
