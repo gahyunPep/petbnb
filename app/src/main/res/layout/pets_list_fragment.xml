@@ -38,7 +38,6 @@
         android:layout_marginBottom="16dp"
         app:layout_anchor="@id/swipeContainer"
         app:layout_anchorGravity="bottom|right"
-        android:src="@drawable/qrcodeicon"
-        android:tint="@android:color/white"/>
+        android:src="@drawable/qrcodeicon"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
