@@ -1,21 +1,14 @@
 package pet.eaters.ca.petbnb.pets.ui.postform;
 
-import androidx.lifecycle.ViewModelProviders;
-
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,6 +21,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.pets.data.PetForm;
 import pet.eaters.ca.petbnb.pets.data.PetOwnerForm;
@@ -47,9 +45,7 @@ public class PetOwnerFormFragment extends Fragment {
     private TextInputLayout zipcodeInputLayout, emailInputLayout, phoneInputLayout;
     private EditText nameEditText, addressEditText, cityEditText, zipcodeEditText, emailEditText, phoneEditText;
     private Spinner provinceSpinner;
-    private Button nextButton;
 
-    private PetForm petForm;
 
     private static final String PET_FORM_KEY = "petForm";
 
@@ -67,7 +63,6 @@ public class PetOwnerFormFragment extends Fragment {
         if (getArguments() == null) {
             throw new IllegalArgumentException();
         }
-        petForm = getArguments().getParcelable(PET_FORM_KEY);
     }
 
     @Override
@@ -84,6 +79,23 @@ public class PetOwnerFormFragment extends Fragment {
 
         View view = getView();
         assert view != null;
+
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.pet_form_menu);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goBack();
+            }
+        });
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                getFormValues();
+                return true;
+            }
+        });
+
         nameInputLayout = view.findViewById(R.id.nameTxtInputLayout);
         addressInputLayout = view.findViewById(R.id.addressTxtInputLayout);
         cityInputLayout = view.findViewById(R.id.cityTxtInputLayout);
@@ -100,7 +112,6 @@ public class PetOwnerFormFragment extends Fragment {
 
         provinceSpinner = initSpinner((Spinner) view.findViewById(R.id.provinceSpinner), getListFromResources(R.array.province_arr));
 
-        nextButton = view.findViewById(R.id.formNextBtn);
 
         //input validation while it's writing
         nameEditText.addTextChangedListener(new NonEmptyTextWatcher(nameInputLayout,getString(R.string.str_ownerNameError)));
@@ -124,17 +135,14 @@ public class PetOwnerFormFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 if(!s.toString().startsWith("+1")){
-                    s.insert(0, "+1");
+                    s.replace(0, s.length(), "+1");
                 }
             }
         });
+    }
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFormValues();
-            }
-        });
+    private void goBack() {
+        getActivity().onBackPressed();
     }
 
     private void goToNextFormFragment(PetForm petForm, PetOwnerForm petOwnerForm) {
@@ -164,6 +172,8 @@ public class PetOwnerFormFragment extends Fragment {
         Map<String, Integer> errors = mViewModel.validateData(name, address, city, zipcode, email, phone, province);
         if(errors.isEmpty()){
             PetOwnerForm petOwnerForm = new PetOwnerForm(name, address, city, province, zipcode, email, phone);
+            PetForm petForm = getArguments().getParcelable(PET_FORM_KEY);
+
             goToNextFormFragment(petForm, petOwnerForm);
         }else{
             bindErrors(errors);

@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -49,9 +51,6 @@ import static android.app.Activity.RESULT_OK;
 public class PhotoUploadFragment extends Fragment {
 
     private PhotoUploadViewModel mViewModel;
-    private Button addCameraBtn;
-    private Button addGalleryBtn;
-    private Button uploadBtn;
 
     private RecyclerView photosRecyclerView;
     private final int REQUEST_IMAGE_CAPTURE = 1;
@@ -91,6 +90,23 @@ public class PhotoUploadFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.photo_upload_fragment, container, false);
+
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.pet_photo_form_menu);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goBack();
+            }
+        });
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                generatePetData(petForm, petOwnerForm, imagePathList);
+                return true;
+            }
+        });
+
         imageList = new ArrayList<>();
         imagePathList = new ArrayList<>();
 
@@ -99,29 +115,20 @@ public class PhotoUploadFragment extends Fragment {
         photosRecyclerView = view.findViewById(R.id.photosView);
         photosRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
 
-        addCameraBtn = view.findViewById(R.id.btn_camera);
-        addCameraBtn.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btn_camera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 takePicture();
             }
         });
 
-        addGalleryBtn = view.findViewById(R.id.btn_gallery);
-        addGalleryBtn.setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.btn_gallery).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addFromGallery();
             }
         });
 
-        uploadBtn = view.findViewById(R.id.btn_upload);
-        uploadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                generatePetData(petForm, petOwnerForm, imagePathList);
-            }
-        });
 
         photoUploadAdapter.updateList(imageList);
         photosRecyclerView.setAdapter(photoUploadAdapter);
@@ -158,6 +165,10 @@ public class PhotoUploadFragment extends Fragment {
                     break;
             }
         }
+    }
+
+    private void goBack() {
+        getActivity().onBackPressed();
     }
 
     private void loadGallery(Intent data) {

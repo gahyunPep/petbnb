@@ -40,7 +40,6 @@ public class PetFormFragment extends Fragment {
 
     private Spinner petAgeSpinner;
 
-    private Toolbar toolbar;
     private TabLayout genderTabLayout;
     private TabLayout petTypeTabLayout;
     private TabLayout petSizeTabLayout;
@@ -73,7 +72,7 @@ public class PetFormFragment extends Fragment {
         petTypeTabLayout = view.findViewById(R.id.petTypeTabLayout);
         petSizeTabLayout = view.findViewById(R.id.petSizeTabLayout);
 
-        toolbar = view.findViewById(R.id.toolbar);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.pet_form_menu);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

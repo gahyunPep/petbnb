@@ -99,8 +99,7 @@ public class MainActivityViewModel extends ViewModel {
                     startScanner(activity, requestCode);
                 }
             }
-        }
-        if (resultCode != Activity.RESULT_CANCELED) {
+        } else if (resultCode != Activity.RESULT_CANCELED) {
             if (requestCode == RC_SIGN_IN_AND_SCAN) {
                 message.setValue(new Event<>(R.string.login_before_scan));
             } else {
