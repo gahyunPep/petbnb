@@ -24,7 +24,7 @@ public class PetFormViewModel extends ViewModel {
         if (petDesc.isEmpty()) {
             validateMap.put(PET_DESC, R.string.str_petDescError);
         }
-        if (petType == 0 || petAge == 0 || petSex == -1) {
+        if (petAge == 0 || petSex == -1) {
             validateMap.put(PET_ELSE, R.string.str_incompleteError);
         }
         return validateMap;

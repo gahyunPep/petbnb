@@ -52,7 +52,9 @@
             android:value="@string/google_maps_key" />
 
 
-        <activity android:name=".pets.ui.postform.PetPostFormActivity">
+        <activity android:name=".pets.ui.postform.PetPostFormActivity"
+            android:screenOrientation="portrait">
+
         </activity>
     </application>
 
