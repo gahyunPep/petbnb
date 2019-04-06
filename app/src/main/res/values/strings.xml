@@ -58,6 +58,13 @@
     <string name="male">Male</string>
     <string name="yeas_old_fmt">%d years old</string>
     <string name="retry">retry</string>
+    <string name="uploaded_msg">Photo upload has been completed!</string>
+
+    <plurals name="photo">
+        <item quantity="one">%d photo out of %d uploaded</item>
+        <item quantity="other">%d photos out of %d uploaded</item>
+    </plurals>
+
     <string name="signed_out">User signed out</string>
     <string name="login_failed">Failed to log in with your account</string>
     <string name="login_success">Successfully signed in</string>
@@ -68,7 +75,6 @@
     <string name="small">Small</string>
     <string name="medium">Medium</string>
     <string name="large">Large</string>
-
 
     <string-array name="petType_arr">
         <item>Pet Type</item>

@@ -21,12 +21,17 @@ public class PhotoStorage {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference reference = storage.getReference();
 
-    public LiveData<List<String>> uploadFiles(List<String> files, String petId) {
-        final MutableLiveData<List<String>> resultLD = new MutableLiveData<>();
+    interface Callback {
+        void onUploadFinish(List<String> result);
+
+        void onPhotoUploaded(int size, int left);
+    }
+
+    public void uploadFiles(final List<String> files, String petId, final Callback callback) {
         final List<String> result = new ArrayList<>();
-        final int[] filesCount = {files.size()};
+        final int[] filesLeft = {files.size()};
         if (files.isEmpty()) {
-            resultLD.postValue(result);
+            callback.onUploadFinish(result);
         }
 
         for (String filePath : files) {
@@ -40,16 +45,16 @@ public class PhotoStorage {
                             if (task.isSuccessful()) {
                                 result.add(task.getResult().toString());
                             }
-                            filesCount[0]--;
+                            filesLeft[0]--;
 
-                            if (filesCount[0] == 0) {
-                                resultLD.postValue(result);
+                            if (filesLeft[0] == 0) {
+                                callback.onUploadFinish(result);
+                            } {
+                                callback.onPhotoUploaded(files.size(), filesLeft[0]);
                             }
                         }
                     });
         }
-
-        return resultLD;
     }
 
     private Continuation<UploadTask.TaskSnapshot, Task<Uri>> getDownloadUrl(final StorageReference refToStore) {

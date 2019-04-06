@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.core.Result;
+import pet.eaters.ca.petbnb.pets.data.ImgUplaodIntentService;
 import pet.eaters.ca.petbnb.pets.data.PetData;
 import pet.eaters.ca.petbnb.pets.data.PetForm;
 import pet.eaters.ca.petbnb.pets.data.PetOwnerForm;
@@ -237,7 +238,7 @@ public class PhotoUploadFragment extends Fragment {
     public void generatePetData(PetForm petForm, PetOwnerForm petOwnerForm, List<String> images) {
         String petName = petForm.petName;
         int petGender = petForm.petGender;
-        int petType = petForm.petType;
+        String petType = petForm.petType + "";
         int petAge = petForm.petAge;
         int petSize = petForm.petSize;
         String petDesc = petForm.petDesc;
@@ -255,17 +256,27 @@ public class PhotoUploadFragment extends Fragment {
         double longitude = geoAddress.second;
         String ownerId = ""; //TODO temp ownerID
 
-        PetData petData = new PetData(petName, petDesc, "1", petSize, petImages, ownerPhone,
+        PetData petData = new PetData(petName, petDesc, petType, petSize, petImages, ownerPhone,
                 ownerAddress, ownerZipCode, latitude, longitude, petAge, petGender, ownerId);
         populatePetData(petData);
     }
 
     private void populatePetData(PetData petData) {
+        final String PET_ID_KEY = "petID";
+        final String PET_IMG_KEY = "petImgs";
+        final List<String> images = petData.getImages();
+        List<String> emptyImgs = new ArrayList<>();
+        petData.setImages(emptyImgs);
         PetsRepository petsRepository = new PetsRepository();
-        petsRepository.post(petData).observe(getViewLifecycleOwner(), new Observer<Result<Void>>() {
+        petsRepository.post(petData).observe(getViewLifecycleOwner(), new Observer<Result<String>>() {
             @Override
-            public void onChanged(Result<Void> voidResult) {
-                if (voidResult.getException() == null) {
+            public void onChanged(Result<String> stringResult) {
+                if (stringResult.getException() == null) {
+                    String petId = stringResult.getData();
+                    Intent uploadIntent = new Intent(getContext(), ImgUplaodIntentService.class);
+                    uploadIntent.putExtra(PET_ID_KEY, petId);
+                    uploadIntent.putStringArrayListExtra(PET_IMG_KEY, (ArrayList<String>) images);
+                    getContext().startService(uploadIntent);
                     getActivity().finish();
                 }
             }

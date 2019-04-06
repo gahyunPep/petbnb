@@ -19,23 +19,22 @@ public class PetsRepository extends AbstractRepository implements IPetsRepositor
             "+17789179146", "704 Royal Street, New Westminster, BC", "V3L 2T6", 49.203664, -122.912863,
             26, 1, "someone");
 
-
     private static final String PETS_COLLECTION ="pets";
-    private PhotoStorage photoStorage = new PhotoStorage();
 
     public PetsRepository() {
         super(PETS_COLLECTION);
     }
 
     @Override
-    public LiveData<Result<Void>> post(final PetData pet) {
+    public LiveData<Result<String>> post(final PetData pet) {
         final DocumentReference createdPet = collection.document();
-        return Transformations.switchMap(photoStorage.uploadFiles(pet.getImages(), createdPet.getId()),
-                new Function<List<String>, LiveData<Result<Void>>>() {
+        return Transformations.map(executeTask(createdPet.set(pet)), new Function<Result<Void>, Result<String>>() {
             @Override
-            public LiveData<Result<Void>> apply(List<String> input) {
-                pet.setImages(input);
-                return executeTask(createdPet.set(pet));
+            public Result<String> apply(Result<Void> input) {
+                if (input.getException() != null) {
+                    return Result.failed(input.getException());
+                }
+                return Result.success(createdPet.getId());
             }
         });
     }
@@ -46,6 +45,11 @@ public class PetsRepository extends AbstractRepository implements IPetsRepositor
     }
 
     @Override
+    public void update(String petId, PetData petData, final Callback<Void> callback) {
+        executeTask(collection.document(petId).set(petData), callback);
+    }
+
+    @Override
     public LiveData<Result<Void>> delete(String petId) {
         return executeTask(collection.document(petId).delete());
     }
@@ -53,6 +57,11 @@ public class PetsRepository extends AbstractRepository implements IPetsRepositor
     @Override
     public LiveData<Result<Pet>> get(String petId) {
         return executeTask(collection.document(petId).get(), petMapper());
+    }
+
+    @Override
+    public void get(String petId, Callback<Pet> callback) {
+        executeTask(collection.document(petId).get(), petMapper(), callback);
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import pet.eaters.ca.petbnb.core.Result;
+import pet.eaters.ca.petbnb.pets.data.GenericRepository.Callback;
 
 public class AbstractRepository {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -40,7 +41,11 @@ public class AbstractRepository {
         return result;
     }
 
-    protected <F, T> void executeTask(Task<F> task, Mapper<F, T> mapper, IPetsRepository.Callback<T> callback) {
+    protected <T> void executeTask(Task<T> task, Callback<T> callback) {
+        executeTask(task, this.<T>transparentMapper(), callback);
+    }
+
+    protected <F, T> void executeTask(Task<F> task, Mapper<F, T> mapper, Callback<T> callback) {
         task.addOnSuccessListener(successListener(callback, mapper))
                 .addOnFailureListener(failureListener(callback));
     }
@@ -49,7 +54,7 @@ public class AbstractRepository {
         return executeTask(task, this.<T>transparentMapper());
     }
 
-    protected <F, T> OnSuccessListener<F> successListener(final IPetsRepository.Callback<T> callback, final Mapper<F, T> mapper) {
+    protected <F, T> OnSuccessListener<F> successListener(final Callback<T> callback, final Mapper<F, T> mapper) {
         return new OnSuccessListener<F>() {
             @Override
             public void onSuccess(F o) {
@@ -58,7 +63,7 @@ public class AbstractRepository {
         };
     }
 
-    protected <T> OnFailureListener failureListener(final IPetsRepository.Callback<T> callback) {
+    protected <T> OnFailureListener failureListener(final Callback<T> callback) {
         return new OnFailureListener() {
             @Override
             public void onFailure(Exception e) {
