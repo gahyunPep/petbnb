@@ -272,23 +272,11 @@ public class MapFragment extends NavigationFragment implements OnMapReadyCallbac
         for (Pet pet : petList) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(pet.getLatitude(), pet.getLongitude()))
-                    .title(getPetType(pet.getType()) + ": " + pet.getName())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_action_name)))
                     .setTag(pet);
         }
     }
 
-    private String getPetType(String type) {
-        switch (type) {
-            case "1":
-                return getString(R.string.dog);
-            case "2":
-                return getString(R.string.cat);
-            case "3":
-            default:
-                return getString(R.string.str_otherTypePet);
-        }
-    }
 
     private void setMarkerClickable() {
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
