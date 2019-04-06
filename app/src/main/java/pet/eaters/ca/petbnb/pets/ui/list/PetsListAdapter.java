@@ -80,7 +80,7 @@ public class PetsListAdapter extends ListAdapter<Pet, PetsListAdapter.PetViewHol
         public void bind(Pet item, View.OnClickListener clickListener) {
             itemView.setOnClickListener(clickListener);
             petListItemName.setText(item.getName());
-            petListItemType.setText(item.getType());
+            petListItemType.setText(getPetType(item.getType()));
             petListItemAge.setText(petListItemAge.getContext().getString(R.string.yeas_old_fmt, item.getAge()));
             bindImage(item);
             bindGender(item);
@@ -127,6 +127,22 @@ public class PetsListAdapter extends ListAdapter<Pet, PetsListAdapter.PetViewHol
             } else {
                 petListItemGender.setVisibility(View.GONE);
             }
+        }
+
+        private String getPetType(String type) {
+            switch (type) {
+                case "1":
+                    return getString(R.string.dog);
+                case "2":
+                    return getString(R.string.cat);
+                case "3":
+                default:
+                    return getString(R.string.str_otherTypePet);
+            }
+        }
+
+        private String getString(int id) {
+            return itemView.getContext().getString(id);
         }
     }
 

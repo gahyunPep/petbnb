@@ -199,12 +199,24 @@ public class PetDetailsFragment extends Fragment {
         petNameAge.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, getGenderIcon(pet.getGender()), 0);
 
         petInfo.setText(pet.getInfo());
-        petSizeType.setText(String.format("%s %s", petSizeToString(pet.getSize()), pet.getType()));
+        petSizeType.setText(String.format("%s %s", petSizeToString(pet.getSize()), getPetType(pet.getType())));
         petCity.setText(pet.getAddress());
 
         viewPager.setAdapter(new ViewPagerAdapter(pet.getImages()));
     }
 
+    private String getPetType(String type) {
+        switch (type) {
+            case "1":
+                return getString(R.string.dog);
+            case "2":
+                return getString(R.string.cat);
+            case "3":
+            default:
+                return getString(R.string.str_otherTypePet);
+        }
+    }
+    
     private void showError(Exception exception) {
         FragmentUtils.showError(this, exception);
     }
