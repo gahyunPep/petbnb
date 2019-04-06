@@ -35,7 +35,7 @@
     <string name="str_incompleteError">Hmmm, It seems like the form is not completed.</string>
     <string name="upload_pet_photos_text">Upload Pet Photos</string>
     <string name="upload_btn_text">Upload</string>
-    <string name="str_phone">(+Country Code) Phone</string>
+    <string name="str_phone">Phone</string>
     <string name="str_address">Address</string>
     <string name="str_email">Email</string>
     <string name="str_city">City</string>
