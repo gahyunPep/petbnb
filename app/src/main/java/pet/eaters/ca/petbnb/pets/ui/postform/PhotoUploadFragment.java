@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.File;
@@ -56,6 +55,7 @@ public class PhotoUploadFragment extends Fragment {
     private final int REQUEST_IMAGE_CAPTURE = 1;
     private final int REQUEST_LOAD_GALLERY = 2;
     private final int REQUEST_ASK_PERMISSION = 3;
+    private final int REQUEST_ASK_PERMISSION_CAMERA = 4;
 
     private PetForm petForm;
     private PetOwnerForm petOwnerForm;
@@ -110,7 +110,7 @@ public class PhotoUploadFragment extends Fragment {
         imageList = new ArrayList<>();
         imagePathList = new ArrayList<>();
 
-        checkPermissions();
+        checkPermissions(REQUEST_ASK_PERMISSION);
 
         photosRecyclerView = view.findViewById(R.id.photosView);
         photosRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
@@ -143,8 +143,10 @@ public class PhotoUploadFragment extends Fragment {
     }
 
     public void takePicture() {
-        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+        if (checkPermissions(REQUEST_ASK_PERMISSION_CAMERA)) {
+            Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(takePicture, REQUEST_IMAGE_CAPTURE);
+        }
     }
 
     public void addFromGallery() {
@@ -289,6 +291,8 @@ public class PhotoUploadFragment extends Fragment {
                     uploadIntent.putStringArrayListExtra(PET_IMG_KEY, (ArrayList<String>) images);
                     getContext().startService(uploadIntent);
                     getActivity().finish();
+
+                    Toast.makeText(getContext(), "Your pet posting is uploaded, Yey!", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -308,7 +312,7 @@ public class PhotoUploadFragment extends Fragment {
     }
 
     // Source: https://developer.here.com/documentation/android-premium/dev_guide/topics/request-android-permissions.html
-    private void checkPermissions() {
+    private boolean checkPermissions(int request) {
         final List<String> missingPermissions = new ArrayList<>();
 
         for (String permission : PERMISSIONS) {
@@ -320,11 +324,10 @@ public class PhotoUploadFragment extends Fragment {
 
         if (!missingPermissions.isEmpty()) {
             final String[] permissions = missingPermissions.toArray(new String[missingPermissions.size()]);
-            requestPermissions(permissions, REQUEST_ASK_PERMISSION);
+            requestPermissions(permissions, request);
+            return false;
         } else {
-            final int[] grantResults = new int[PERMISSIONS.length];
-            Arrays.fill(grantResults, PackageManager.PERMISSION_GRANTED);
-            onRequestPermissionsResult(REQUEST_ASK_PERMISSION, PERMISSIONS, grantResults);
+            return true;
         }
     }
 
@@ -341,7 +344,17 @@ public class PhotoUploadFragment extends Fragment {
                     }
                 }
                 // all permissions granted
-                return;
+                break;
+            case REQUEST_ASK_PERMISSION_CAMERA:
+                for (int index = permissions.length - 1; index >= 0; --index) {
+                    if (grantResults[index] != PackageManager.PERMISSION_GRANTED) {
+                        // exit fragment if permission not granted
+                        Toast.makeText(getContext(), "Required permission '" + permissions[index]
+                                + "' not granted, exiting", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                takePicture();
         }
     }
 }
