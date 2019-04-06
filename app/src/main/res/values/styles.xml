@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="floatingActionButtonStyle">@style/FabStyle</item>
         <item name="materialButtonStyle">@style/ButtonStyle</item>
+        <item name="colorControlActivated">@color/colorOnSecondary</item>
     </style>
 
     <style name="FabStyle" parent="Widget.MaterialComponents.FloatingActionButton">

@@ -1,32 +1,28 @@
 package pet.eaters.ca.petbnb.pets.ui.postform;
 
-import androidx.lifecycle.ViewModelProviders;
-
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import pet.eaters.ca.petbnb.R;
 import pet.eaters.ca.petbnb.pets.data.PetForm;
 
@@ -41,14 +37,14 @@ public class PetFormFragment extends Fragment {
     private TextInputLayout nameInputLayout;
     private EditText descEditTxt;
     private TextInputLayout descInputLayout;
-    private RadioButton femaleBtn;
-    private RadioButton maleBtn;
 
-    private Spinner petTypeSpinner;
     private Spinner petAgeSpinner;
-    private Spinner petSizeSpinner;
 
-    private Button nextButton;
+    private Toolbar toolbar;
+    private TabLayout genderTabLayout;
+    private TabLayout petTypeTabLayout;
+    private TabLayout petSizeTabLayout;
+    private PetSizeView petSize;
 
     public static PetFormFragment newInstance() {
         return new PetFormFragment();
@@ -72,25 +68,67 @@ public class PetFormFragment extends Fragment {
         nameInputLayout = view.findViewById(R.id.nameTxtInputLayout);
         descEditTxt = view.findViewById(R.id.petDescEditTxt);
         descInputLayout = view.findViewById(R.id.descTxtInputLayout);
-        femaleBtn = view.findViewById(R.id.femaleRadioBtn);
-        maleBtn = view.findViewById(R.id.maleRadioBtn);
-        nextButton = view.findViewById(R.id.formNextBtn);
+
+        genderTabLayout = view.findViewById(R.id.genderTabLayout);
+        petTypeTabLayout = view.findViewById(R.id.petTypeTabLayout);
+        petSizeTabLayout = view.findViewById(R.id.petSizeTabLayout);
+
+        toolbar = view.findViewById(R.id.toolbar);
+        toolbar.inflateMenu(R.menu.pet_form_menu);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goBack();
+            }
+        });
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                getFormValues();
+                return true;
+            }
+        });
+
+        petSize = view.findViewById(R.id.petSizeView);
+        petSize.setSizeListener(new PetSizeView.PetSizeListener() {
+            @Override
+            public void onPetSizeChanged(int petSize) {
+                //TODO add checks
+                petSizeTabLayout.getTabAt(petSize).select();
+            }
+        });
+
+        genderTabLayout.addOnTabSelectedListener(new AbstractTabListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                petSize.setGender(tab.getPosition());
+            }
+        });
+
+        petTypeTabLayout.addOnTabSelectedListener(new AbstractTabListener()  {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                petSize.setPetType(tab.getPosition());
+            }
+        });
+
+        petSizeTabLayout.addOnTabSelectedListener(new AbstractTabListener()  {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                petSize.setPetSize(tab.getPosition());
+            }
+        });
 
 
-        petTypeSpinner = initSpinner((Spinner) view.findViewById(R.id.petTypeSpinner), getListFromResources(R.array.petType_arr));
         petAgeSpinner = initSpinner((Spinner) view.findViewById(R.id.petAgeSpinner), mViewModel.getAgeArrList(getString(R.string.str_age), getString(R.string.str_over30)));
-        petSizeSpinner = initSpinner((Spinner) view.findViewById(R.id.petSizeSpinner), getListFromResources(R.array.petSize_arr));
 
         //input validation while it's writing
         nameEditTxt.addTextChangedListener(new NonEmptyTextWatcher(nameInputLayout, getString(R.string.str_petNameError)));
         descEditTxt.addTextChangedListener(new NonEmptyTextWatcher(descInputLayout, getString(R.string.str_petDescError)));
+    }
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFormValues();
-            }
-        });
+    private void goBack() {
+        getActivity().onBackPressed();
     }
 
     private void goToNextFormFragment(PetForm petForm) {
@@ -98,10 +136,6 @@ public class PetFormFragment extends Fragment {
                 .replace(R.id.formFragmentContainer, PetOwnerFormFragment.newInstance(petForm))
                 .addToBackStack(null)
                 .commit();
-    }
-
-    private ArrayList<String> getListFromResources(int arr) {
-        return new ArrayList<>(Arrays.asList(getResources().getStringArray(arr)));
     }
 
     private Spinner initSpinner(Spinner spinner, List<String> list) {
@@ -121,17 +155,13 @@ public class PetFormFragment extends Fragment {
 
         petName = nameEditTxt.getText().toString().trim();
         petDesc = descEditTxt.getText().toString().trim();
-        petType = petTypeSpinner.getSelectedItemPosition();
-        petAge = petAgeSpinner.getSelectedItemPosition();
-        petSize = petSizeSpinner.getSelectedItemPosition();
 
-        if (femaleBtn.isChecked()) {
-            petGender = 0;
-        } else if (maleBtn.isChecked()) {
-            petGender = 1;
-        } else {
-            petGender = -1;
-        }
+
+        petType = petTypeTabLayout.getSelectedTabPosition();
+        petAge = petAgeSpinner.getSelectedItemPosition();
+        petSize = petSizeTabLayout.getSelectedTabPosition();
+
+        petGender = genderTabLayout.getSelectedTabPosition();
 
         validateData(petName, petDesc, petType, petAge, petSize, petGender);
     }
@@ -196,5 +226,15 @@ public class PetFormFragment extends Fragment {
             }
         };
     }
-    
+
+    static abstract class AbstractTabListener implements TabLayout.OnTabSelectedListener {
+        @Override
+        public void onTabSelected(TabLayout.Tab tab) { }
+
+        @Override
+        public void onTabUnselected(TabLayout.Tab tab) { }
+
+        @Override
+        public void onTabReselected(TabLayout.Tab tab) { }
+    }
 }

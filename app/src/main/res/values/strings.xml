@@ -64,13 +64,17 @@
     <string name="login_before_scan">Please login before you can scan the pet</string>
     <string name="pet_sitting">Pet sitting</string>
     <string name="yay">Yay!</string>
+    <string name="other">Other</string>
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="large">Large</string>
 
 
     <string-array name="petType_arr">
         <item>Pet Type</item>
         <item>@string/dog</item>
         <item>@string/cat</item>
-        <item>Others</item>
+        <item>@string/other</item>
     </string-array>
 
     <string-array name="petSize_arr">
