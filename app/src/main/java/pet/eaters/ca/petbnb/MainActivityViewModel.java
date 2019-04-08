@@ -148,7 +148,7 @@ public class MainActivityViewModel extends ViewModel {
     }
 
     private String getMessage(ScanRecord scanRecord) {
-        if (scanRecord.getTimestamps().size() % 2 == 0) {
+        if (scanRecord.getTimestamps().size() % 2 == 0 || scanRecord.getTimestamps().size() < 2) {
             return "Start time is set!";
         } else {
             return "You will have to pay: $" + calculatePayment(scanRecord.getTimestamps());
